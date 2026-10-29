@@ -12,7 +12,6 @@ a:hover { color: #192f70; }
 :focus-visible { outline: 3px solid #6699ff; outline-offset: 2px; }
 
 .ss-press:active { transform: scale(0.98); }
-.ss-reply:hover { border-color: #6699ff !important; }
 .ss-btn:not(:disabled):hover { filter: brightness(1.08); }
 .ss-choice:hover { border-color: #b5cdff !important; }
 .ss-tap:hover { box-shadow: 0 0 0 2px #b5cdff; }

@@ -1,37 +1,32 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { BADGES, KINDS, ROUNDS, isBad, type CallRound, type MessageRound, type Part, type SectionKind } from '../data/content';
+import { BADGES, KINDS, ROUNDS, isBad, type Round, type Part, type SectionKind } from '../data/content';
 import { Icon, type IconName } from '../ds/Icon';
 import { settings } from '../game/settings';
 import { demoTarget, isDone, levelSize, roundNumber, roundsInLevel, subName, type Game, type GameState, type Mark } from '../game/useGame';
 import { C, Card, Pill, PrimaryButton, SHADOW, TextButton, col, kicker } from '../ui';
 
-export function RoundScreen({ game, dark }: { game: Game; dark: boolean }) {
+export function RoundScreen({ game }: { game: Game }) {
   const { s, round } = game;
   const inIntro = !s.revealed && s.phase === 'intro';
-  let body: ReactNode;
-  if (inIntro) body = <div className="ss-narrow"><RoundIntro game={game} dark={dark} /></div>;
-  else if (round.kind !== 'call') body = <MessageRoundView game={game} round={round} />;
-  else if (!s.revealed) body = <div className="ss-narrow"><CallPlay game={game} round={round} /></div>;
-  else body = <div className="ss-narrow" style={col(18)}><RevealHead game={game} /><RevealBody game={game} /></div>;
+  const body: ReactNode = inIntro ? <div className="ss-narrow"><RoundIntro game={game} /></div> : <MessageRoundView game={game} round={round} />;
   return (
     <div data-screen-label={`Round L${round.lvl}-${roundNumber(s.cur)}`} style={{ paddingBottom: 48 }}>{body}</div>
   );
 }
 
+const noun = (r: Round) => (r.kind === 'voicemail' ? 'voicemail' : 'message');
 const roundLine = (s: GameState) => `LEVEL ${ROUNDS[s.cur].lvl} · ROUND ${roundNumber(s.cur)} OF ${levelSize(ROUNDS[s.cur].lvl)}`;
 
 // ---------------------------------------------------------------- intro
 
-function RoundIntro({ game: { s, round, actions }, dark }: { game: Game; dark: boolean }) {
-  const isCall = round.kind === 'call', demo = s.cur === 0, kind = KINDS[round.kind];
-  const steps = isCall ? ['Listen', 'Respond', 'Learn'] : ['Decide', 'Flag', 'Learn'];
-  const title = isCall ? 'Answer the call.' : demo ? "Let's practice one together." : 'Real or scam?';
-  const body = isCall ? 'Read what the caller says. Reply, or hang up whenever you think you should.'
-    : demo ? "First you'll decide if it's real or a scam. Then we'll show you how to point out the red flags."
-    : "Read the message and make your call. If you think it's a scam, you'll point out what gave it away.";
-  const cta = isCall ? 'Answer' : demo ? 'Show me' : 'Open the message';
-  // Call intros sit on the navy call background, so their text goes light.
-  const fg = dark ? '#fff' : C.ink, sub = dark ? '#cfe0ff' : C.body, label = dark ? '#a3aebf' : C.muted;
+function RoundIntro({ game: { s, round, actions } }: { game: Game }) {
+  const demo = s.cur === 0, kind = KINDS[round.kind];
+  const steps = ['Decide', 'Flag', 'Learn'];
+  const title = demo ? "Let's practice one together." : 'Real or scam?';
+  const body = demo ? "First you'll decide if it's real or a scam. Then we'll show you how to point out the red flags."
+    : `Read the ${noun(round)} and make your call. If you think it's a scam, you'll point out what gave it away.`;
+  const cta = demo ? 'Show me' : `Open the ${noun(round)}`;
+  const fg = C.ink, sub = C.body, label = C.muted;
   return (
     <div data-screen-label="Round intro" className="ss-fill" style={col(28, { paddingTop: 4 })}>
       <div style={{ display: 'flex', gap: 6 }}>
@@ -82,7 +77,7 @@ function pieces(parts: Part[], keyPrefix: string, canTap: boolean, s: GameState)
   });
 }
 
-function Pieces({ list, game, round, im, head }: { list: Piece[]; game: Game; round: MessageRound; im: boolean; head?: boolean }) {
+function Pieces({ list, game, round, im, head }: { list: Piece[]; game: Game; round: Round; im: boolean; head?: boolean }) {
   const { s, actions } = game;
   const rev = s.revealed, active = !rev && s.phase === 'flags';
   // The practice round glows one target at a time, and only once the player is flagging.
@@ -121,10 +116,10 @@ function Pieces({ list, game, round, im, head }: { list: Piece[]; game: Game; ro
   );
 }
 
-const secOf = (round: MessageRound, k: SectionKind) => round.sections.find(x => x.s === k)?.p ?? [];
+const secOf = (round: Round, k: SectionKind) => round.sections.find(x => x.s === k)?.p ?? [];
 
 /** iOS Messages look for text rounds. */
-function TextMessage({ game, round }: { game: Game; round: MessageRound }) {
+function TextMessage({ game, round }: { game: Game; round: Round }) {
   const { s } = game;
   const head = secOf(round, 'head'), first = head[0];
   const unknown = /^\+/.test(typeof first === 'string' ? first : first?.t ?? '');
@@ -160,6 +155,43 @@ function TextMessage({ game, round }: { game: Game; round: MessageRound }) {
   );
 }
 
+/** iOS Voicemail look: caller, a (static) player and the transcript. */
+function VoicemailCard({ game, round }: { game: Game; round: Round }) {
+  const { s } = game;
+  const [when, length = '0:30'] = String(secOf(round, 'meta')[0] ?? 'Today').split(' · ');
+  const ios: CSSProperties = { fontFamily: "-apple-system,'SF Pro Text',system-ui,var(--font-sans)" };
+  const blue = '#007aff', grey = '#8e8e93';
+  return (
+    <div style={{ background: '#fff', borderRadius: 28, boxShadow: SHADOW, overflow: 'hidden', maxWidth: 480, margin: '0 auto', ...ios }}>
+      <div style={col(2, { padding: '18px 20px 12px' })}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: grey, letterSpacing: '0.04em' }}>VOICEMAIL</span>
+        <span style={{ fontSize: 22, fontWeight: 700, color: '#000', lineHeight: 1.6 }}>
+          <Pieces list={pieces(secOf(round, 'head'), 'h', true, s)} game={game} round={round} im head />
+        </span>
+        <span style={{ fontSize: 15, color: grey }}>{when}</span>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '4px 20px 16px' }}>
+        <span style={{ width: 40, height: 40, borderRadius: '50%', background: '#e9e9eb', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name="Play" size={20} /></span>
+        <div style={col(4, { flex: 1 })}>
+          <div style={{ position: 'relative', height: 4, borderRadius: 2, background: '#e5e5ea' }}>
+            <span style={{ position: 'absolute', left: -2, top: -4, width: 12, height: 12, borderRadius: '50%', background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }} />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: grey }}><span>0:00</span><span>-{length}</span></div>
+        </div>
+      </div>
+      <div style={col(6, { borderTop: '1px solid #e5e5ea', padding: '14px 20px 18px' })}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: grey }}>Transcription</span>
+        <div style={{ fontSize: 18, lineHeight: 1.9, color: '#000', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>
+          <Pieces list={pieces(secOf(round, 'body'), 'b', true, s)} game={game} round={round} im />
+        </div>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-around', borderTop: '1px solid #e5e5ea', padding: '12px 20px', fontSize: 16, color: blue }}>
+        <span>Speaker</span><span>Call Back</span><span style={{ color: '#ff3b30' }}>Delete</span>
+      </div>
+    </div>
+  );
+}
+
 /** [padding, font size, weight, line height, colour, bottom border] per section type. */
 const SEC: Record<SectionKind, [string, number, number, number, string, string]> = {
   head: ['12px 16px 2px', 18, 700, 1.9, C.ink, 'none'], meta: ['0 16px 12px', 14, 400, 1.9, C.muted, `2px solid ${C.line}`],
@@ -167,7 +199,7 @@ const SEC: Record<SectionKind, [string, number, number, number, string, string]>
 };
 
 /** Email, DM, social post and listing rounds. */
-function MessageCard({ game, round }: { game: Game; round: MessageRound }) {
+function MessageCard({ game, round }: { game: Game; round: Round }) {
   const kind = KINDS[round.kind];
   return (
     <Card style={{ overflow: 'hidden' }}>
@@ -202,7 +234,7 @@ const subline = (t: string) => <span style={{ fontSize: 18, color: C.muted, line
  * Message rounds use three areas: `head` (step title), `msg` (the message) and `ctrl` (choices / results).
  * Phones stack them head → msg → ctrl; desktop puts the message on the left and head + ctrl in a side panel.
  */
-function MessageRoundView({ game, round }: { game: Game; round: MessageRound }) {
+function MessageRoundView({ game, round }: { game: Game; round: Round }) {
   const { s } = game;
   const inFlags = !s.revealed && s.phase === 'flags';
   const head = s.revealed ? <RevealHead game={game} /> : inFlags ? <FlagsHead game={game} round={round} /> : <VerdictHead game={game} />;
@@ -211,21 +243,21 @@ function MessageRoundView({ game, round }: { game: Game; round: MessageRound }) 
     <div className="ss-round">
       <div style={{ gridArea: 'head' }}>{head}</div>
       <div className="ss-round-msg" style={{ gridArea: 'msg' }}>
-        {round.kind === 'text' ? <TextMessage game={game} round={round} /> : <MessageCard game={game} round={round} />}
+        {round.kind === 'text' ? <TextMessage game={game} round={round} /> : round.kind === 'voicemail' ? <VoicemailCard game={game} round={round} /> : <MessageCard game={game} round={round} />}
       </div>
       <div style={{ gridArea: 'ctrl' }}>{ctrl}</div>
     </div>
   );
 }
 
-function FlagsHead({ game: { s }, round }: { game: Game; round: MessageRound }) {
+function FlagsHead({ game: { s }, round }: { game: Game; round: Round }) {
   const demo = s.cur === 0, counted = round.lvl === 1 || s.wrongVerdict;
   const badCount = round.clues.filter(isBad).length;
   const dt = demoTarget(s);
   const [what, why] = demo
     ? (dt != null ? DEMO_COACH[dt] : [`You found all ${badCount}.`, 'Tap See results to learn what each one means.'])
     : [counted ? `Tap the ${badCount} red flags.` : 'Tap what gave it away.',
-       s.wrongVerdict ? 'Learning them now makes the next one easier.' : 'Tap any words in the message that look off.'];
+       s.wrongVerdict ? 'Learning them now makes the next one easier.' : `Tap any words in the ${noun(round)} that look off.`];
   return (
     <div style={col(8)}>
       {s.wrongVerdict && (
@@ -244,7 +276,7 @@ function FlagsHead({ game: { s }, round }: { game: Game; round: MessageRound }) 
   );
 }
 
-function FlagsControls({ game: { s, actions }, round }: { game: Game; round: MessageRound }) {
+function FlagsControls({ game: { s, actions }, round }: { game: Game; round: Round }) {
   const demo = s.cur === 0, counted = round.lvl === 1 || s.wrongVerdict;
   const badCount = round.clues.filter(isBad).length;
   const foundBad = s.marked.filter(c => typeof c === 'number' && isBad(round.clues[c])).length;
@@ -269,12 +301,12 @@ function FlagsControls({ game: { s, actions }, round }: { game: Game; round: Mes
   );
 }
 
-function VerdictHead({ game: { s } }: { game: Game }) {
+function VerdictHead({ game: { s, round } }: { game: Game }) {
   return (
     <div style={col(8)}>
       {stepLabel(1)}
       {title('Is this real or a scam?')}
-      {subline(s.cur === 0 ? "This one is a scam. Tap Scam and we'll show you why." : 'Read the message, then choose.')}
+      {subline(s.cur === 0 ? "This one is a scam. Tap Scam and we'll show you why." : `Read the ${noun(round)}, then choose.`)}
     </div>
   );
 }
@@ -297,54 +329,6 @@ function VerdictControls({ game: { s, actions } }: { game: Game }) {
   );
 }
 
-// ---------------------------------------------------------------- call rounds
-
-function CallPlay({ game: { s, actions }, round }: { game: Game; round: CallRound }) {
-  const log = s.log || [{ who: 'Caller', text: round.steps[0].caller }];
-  return (
-    <div className="ss-fill" style={col(16, { color: '#fff' })}>
-      <div style={col(6, { alignItems: 'center', textAlign: 'center', padding: '0 0 6px' })}>
-        <span style={kicker(14, '#a3aebf')}>{roundLine(s)}</span>
-        <span style={{ fontSize: 30, fontWeight: 600 }}>{round.caller}</span>
-        <span style={{ fontSize: 16, color: '#ffd89e' }}>Practice call · Caller ID can be faked</span>
-      </div>
-      {round.prelude && (
-        <div style={col(8, { border: `1.5px dashed ${C.muted}`, borderRadius: 18, padding: '14px 16px' })}>
-          <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.06em', color: '#a3aebf' }}>A FEW MINUTES EARLIER · TEXT FROM {round.prelude.from}</span>
-          <span style={{ fontSize: 18, lineHeight: 1.45 }}>{round.prelude.text}</span>
-          <span style={{ fontSize: 16, color: '#b5cdff' }}>You replied: {round.prelude.reply}</span>
-        </div>
-      )}
-      {log.map((m, i) => {
-        const you = m.who === 'You';
-        return (
-          <div key={i} style={{ display: 'flex', justifyContent: you ? 'flex-end' : 'flex-start', animation: 'ss-rise .3s ease-out' }}>
-            <div style={{ maxWidth: '88%', padding: '14px 16px', borderRadius: 20, background: you ? C.blue : '#fff', color: you ? '#fff' : C.ink, fontSize: 19, lineHeight: 1.45 }}>{m.text}</div>
-          </div>
-        );
-      })}
-      <div style={col(10, { marginTop: 'auto', paddingTop: 8 })}>
-        {s.callHint && (
-          <div style={{ background: C.orange, color: C.ink, borderRadius: 18, padding: '14px 16px', fontSize: 18, lineHeight: 1.45, fontWeight: 600, animation: 'ss-rise .25s ease-out' }}>
-            {round.hint || 'Hint: you can always hang up and call back on a number you trust.'}
-          </div>
-        )}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 16, color: '#a3aebf' }}>Reply…</span>
-          <button onClick={actions.useHint} style={{ minHeight: 44, padding: '0 14px', borderRadius: 999, border: '1.5px solid rgba(255,255,255,0.3)', background: 'transparent', fontSize: 16, fontWeight: 500, color: '#fff', cursor: 'pointer' }}>Stuck? Hint</button>
-        </div>
-        {round.steps[s.step].replies.map(rp => (
-          <button key={rp.text} className="ss-reply" onClick={() => actions.reply(rp)} style={{ minHeight: 58, padding: '12px 18px', borderRadius: 18, border: '2px solid #39465e', background: '#141e37', textAlign: 'left', fontSize: 18, color: '#fff', cursor: 'pointer', lineHeight: 1.35 }}>{rp.text}</button>
-        ))}
-        <span style={{ fontSize: 16, color: '#a3aebf', textAlign: 'center', paddingTop: 6 }}>…or</span>
-        <button className="ss-press" onClick={actions.hangUp} style={{ minHeight: 68, borderRadius: 999, border: 'none', background: C.orange, color: C.ink, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, cursor: 'pointer', fontSize: 21, fontWeight: 600 }}>
-          <Icon name="CallMissed" size={28} />Hang up
-        </button>
-      </div>
-    </div>
-  );
-}
-
 // ---------------------------------------------------------------- reveal
 
 type Row = { label: string; why: string; dot: string; icon: IconName };
@@ -352,25 +336,16 @@ type Outcome = { good: boolean; stamp: string; title: string; rowsTitle: string;
 
 function outcome(s: GameState): Outcome {
   const round = ROUNDS[s.cur];
-  if (round.kind !== 'call') {
-    const scam = round.answer === 'scam', right = s.verdict === round.answer;
-    const title = scam ? (right ? 'Correct. This is a scam.' : "This one was tricky — it's a scam.") : (right ? 'Correct. This message is real.' : 'This one is actually real.');
-    if (!scam) {
-      return { good: true, stamp: 'REAL', title, rowsTitle: "HOW YOU CAN TELL IT'S REAL", rows: round.clues.map(c => ({ label: c.label, why: c.why, dot: '#ebfaf6', icon: 'Checkmark' })) };
-    }
-    const bads = round.clues.map((c, i) => ({ ...c, i })).filter(isBad);
-    return {
-      good: false, stamp: 'SCAM', title, rowsTitle: `RED FLAGS · YOU FOUND ${bads.filter(c => s.marked.includes(c.i)).length} OF ${bads.length}`,
-      rows: bads.map(c => { const m = s.marked.includes(c.i); return { label: c.label, why: m ? c.why : 'Missed — ' + c.why, dot: m ? C.teal : '#ffe9c9', icon: m ? 'Checkmark' : 'Search3' }; }),
-    };
+  const scam = round.answer === 'scam', right = s.verdict === round.answer;
+  const title = scam ? (right ? 'Correct. This is a scam.' : "This one was tricky — it's a scam.") : (right ? `Correct. This ${noun(round)} is real.` : 'This one is actually real.');
+  if (!scam) {
+    return { good: true, stamp: 'REAL', title, rowsTitle: "HOW YOU CAN TELL IT'S REAL", rows: round.clues.map(c => ({ label: c.label, why: c.why, dot: '#ebfaf6', icon: 'Checkmark' })) };
   }
-  const E = {
-    good: ['SAFE', s.endTitle || (s.endedAt === 0 ? 'You ended the call before they asked for anything.' : 'You ended the call. That was the right move.')],
-    meh: ['ALMOST', round.meh || 'Good instinct, but there was a safer move.'],
-    bad: ['SCAM', "This scam works on a lot of people. Here's how it worked."],
-  } as const;
-  const end = s.end || 'good';
-  return { good: end === 'good', stamp: E[end][0], title: E[end][1], rowsTitle: 'TRICKS IT TRIED', rows: round.tricks.map(t => ({ label: t[0], why: t[1], dot: C.orange, icon: 'Exclamation' })) };
+  const bads = round.clues.map((c, i) => ({ ...c, i })).filter(isBad);
+  return {
+    good: false, stamp: 'SCAM', title, rowsTitle: `RED FLAGS · YOU FOUND ${bads.filter(c => s.marked.includes(c.i)).length} OF ${bads.length}`,
+    rows: bads.map(c => { const m = s.marked.includes(c.i); return { label: c.label, why: m ? c.why : 'Missed — ' + c.why, dot: m ? C.teal : '#ffe9c9', icon: m ? 'Checkmark' : 'Search3' }; }),
+  };
 }
 
 function RevealHead({ game: { s } }: { game: Game }) {
@@ -388,7 +363,6 @@ function RevealBody({ game: { s, round, actions } }: { game: Game }) {
   const size = levelSize(round.lvl);
   const lvlLeft = ROUNDS.filter((rd, i) => rd.lvl === round.lvl && !isDone(s, i)).length;
   const bName = BADGES[round.lvl - 1][0];
-  const say = round.kind === 'call' ? round.say : undefined;
   const lastInLevel = !(s.cur + 1 < ROUNDS.length && ROUNDS[s.cur + 1].lvl === round.lvl);
   const progress = lvlLeft ? `${lvlLeft} more to earn ${bName.startsWith('The ') ? '' : 'the '}${bName} badge` : `${bName} badge unlocked`;
   return (
@@ -409,11 +383,6 @@ function RevealBody({ game: { s, round, actions } }: { game: Game }) {
       <div style={col(8, { background: '#ebf2ff', color: C.navy, borderRadius: 20, padding: '16px 18px' })}>
         <span style={kicker(13, C.blue)}>WHAT TO DO</span>
         <span style={{ fontSize: 18, fontWeight: 600, lineHeight: 1.35, color: C.ink }}>{round.lesson}</span>
-        {say && (
-          <div style={{ background: '#fff', color: C.ink, borderRadius: '14px 14px 14px 4px', padding: '10px 14px', fontSize: 17, lineHeight: 1.4, fontWeight: 600, marginTop: 4 }}>
-            <span style={{ display: 'block', fontSize: 12, fontWeight: 500, letterSpacing: '0.06em', color: C.muted, marginBottom: 2 }}>WHAT TO SAY</span>{say}
-          </div>
-        )}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 4 }}>
         <div style={{ display: 'flex', gap: 5 }}>

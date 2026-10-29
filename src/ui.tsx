@@ -9,7 +9,6 @@ export const C = {
 };
 export const SHADOW = '0 1px 2px rgba(25,47,112,0.04),0 8px 24px rgba(25,47,112,0.07)';
 export const HERO = 'radial-gradient(120% 90% at 100% 0%,rgba(42,95,252,0.75) 0%,rgba(42,95,252,0) 60%),linear-gradient(150deg,#192F70 0%,#141E37 100%)';
-export const NAVY = 'linear-gradient(150deg,#192F70 0%,#141E37 100%)';
 
 export const col = (gap: number, extra?: CSSProperties): CSSProperties => ({ display: 'flex', flexDirection: 'column', gap, ...extra });
 export const kicker = (size = 14, color = C.body): CSSProperties => ({ fontSize: size, fontWeight: 500, letterSpacing: '0.08em', color });

@@ -18,7 +18,7 @@ export function Welcome({ game: { actions } }: { game: Game }) {
         <span style={{ fontSize: 15, fontWeight: 500, color: C.blue }}>AURA · SCAM SPOTTER</span>
         <span style={{ fontSize: 44, fontWeight: 600, lineHeight: 1.1, textWrap: 'balance' }}>Spot scams before they spot you.</span>
       </div>
-      <span style={{ fontSize: 21, lineHeight: 1.45, color: '#263147', textWrap: 'pretty' }}>Practice spotting scams in pretend texts, emails, posts, and calls.</span>
+      <span style={{ fontSize: 21, lineHeight: 1.45, color: '#263147', textWrap: 'pretty' }}>Practice spotting scams in pretend texts, emails, ads, and voicemails.</span>
       <div style={col(10)}>
         {WELCOME_POINTS.map(wp => (
           <div key={wp} style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 18 }}>
@@ -49,7 +49,7 @@ export function NameScreen({ game: { s, actions } }: { game: Game }) {
 }
 
 const HOW_STEPS = [
-  { n: 1, title: 'Read a pretend message', body: 'Texts, emails, posts, and calls.', bg: '#ebf2ff' },
+  { n: 1, title: 'Read a pretend message', body: 'Texts, emails, messages, ads, and voicemails.', bg: '#ebf2ff' },
   { n: 2, title: 'Decide: real or scam?', body: 'One tap. Some messages really are real.', bg: '#fff5e5' },
   { n: 3, title: 'Tap the red flags', body: 'If it’s a scam, tap what gave it away — an odd link, a deadline, a request for money.', bg: '#fff5e5' },
 ];

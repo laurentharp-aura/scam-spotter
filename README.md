@@ -14,9 +14,9 @@ npm run build     # typecheck + production build to dist/
 
 | Path | What |
 |---|---|
-| `src/data/content.ts` | All 22 rounds across 6 levels (every level includes at least one real message), plus the level and badge definitions. Each round has a stable `id`, which is what saved progress refers to. |
-| `src/game/useGame.ts` | Game state, persistence (`localStorage`, key `scamSpotter.progress`), the Decide → Flag → Learn flow, hints, calls, scoring |
-| `src/screens/` | Welcome, name and how-to-play onboarding · Home · Trail · Round (intro, message, call, reveal) · Level complete · Badges · Help |
+| `src/data/content.ts` | 18 rounds across 6 themed levels (scam texts, fraud texts, emails, messages, ads, voicemails), 3 per level with real and fake mixed, plus the level and badge definitions. Each round has a stable `id`, which is what saved progress refers to. |
+| `src/game/useGame.ts` | Game state, persistence (`localStorage`, key `scamSpotter.progress.v2`), the Decide → Flag → Learn flow, hints, scoring |
+| `src/screens/` | Welcome, name and how-to-play onboarding · Home · Trail · Round (intro, message or voicemail, reveal) · Level complete · Badges · Help |
 | `src/ui.tsx` | Shared colours, shadows and buttons, plus the badge medallion |
 | `src/ds/` | Pieces pulled from the Aura Blueprint DS bundle: the icon subset, the `CallProtection` illustration and the token CSS. Regenerate them with `node scripts/extract-ds.mjs`, run from a checkout that has the Claude Design bundle in `../project/`. Don't edit the generated files. |
 

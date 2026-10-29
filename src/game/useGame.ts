@@ -1,23 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
-import { BADGES, ROUNDS, isBad, type CallEnd, type CallReply, type CallRound, type MessageRound, type Round } from '../data/content';
+import { BADGES, ROUNDS, isBad, type Round } from '../data/content';
 import { settings } from './settings';
 
 export type Screen = 'welcome' | 'name' | 'how' | 'home' | 'map' | 'round' | 'complete' | 'guide' | 'help';
-export type Phase = 'intro' | 'verdict' | 'flags' | 'call';
+export type Phase = 'intro' | 'verdict' | 'flags';
 export type Verdict = 'scam' | 'legit';
 /** A clue index, or a string key for an ordinary (neutral) phrase. */
 export type Mark = number | string;
-export type LogLine = { who: 'Caller' | 'You'; text: string };
 
 export type GameState = {
   screen: Screen; prev: Screen;
   name: string; nameDraft: string; /** Finished rounds, keyed by round id. */
   done: Record<string, true>; points: number; onboarded: boolean;
   cur: number; phase: Phase; revealed: boolean;
-  // message rounds
   verdict: Verdict | null; wrongVerdict: boolean; marked: Mark[]; wrong: Mark | null; quip: string | null; hinted: number[];
-  // call rounds
-  step: number; log: LogLine[] | null; end: CallEnd | null; endTitle: string | null; endedAt: number; callHint: boolean;
   hintsUsed: number; lastPts: number;
   doneLevel: number; openB: number | null;
 };
@@ -26,8 +22,8 @@ export type GameState = {
 const KEY = 'scamSpotter.progress.v2';
 
 const freshRound = {
-  marked: [], verdict: null, revealed: false, quip: null, step: 0, log: null, end: null, endTitle: null, endedAt: 0,
-  hinted: [], hintsUsed: 0, callHint: false, phase: 'intro', wrongVerdict: false, wrong: null,
+  marked: [], verdict: null, revealed: false, quip: null,
+  hinted: [], hintsUsed: 0, phase: 'intro', wrongVerdict: false, wrong: null,
 } satisfies Partial<GameState>;
 
 function initialState(): GameState {
@@ -66,7 +62,6 @@ export function badgeView(s: GameState, li: number): BadgeView {
 
 function score(s: GameState, round: Round) {
   const pen = s.hintsUsed * 3;
-  if (round.kind === 'call') return Math.max(5, (s.end === 'good' ? 30 + (s.endedAt === 0 ? 10 : 0) : s.end === 'meh' ? 15 : 5) - pen);
   const found = s.marked.filter(c => typeof c === 'number' && isBad(round.clues[c])).length;
   const right = s.verdict === round.answer;
   return Math.max(5, (right ? 20 : 5) + found * 5 - pen);
@@ -104,7 +99,6 @@ export function useGame() {
     });
     top();
   };
-  const endCall = (end: CallEnd, title?: string) => finish({ end, endTitle: title || null, endedAt: s.step, revealed: true });
 
   const actions = {
     go, start,
@@ -119,17 +113,17 @@ export function useGame() {
       top();
     },
 
-    beginRound: () => { set({ phase: round.kind === 'call' ? 'call' : 'verdict' }); top(); },
+    beginRound: () => { set({ phase: 'verdict' }); top(); },
     /** One tap decides: real messages go straight to the reveal, scams go on to flagging. */
     choose: (v: Verdict) => {
       if (s.cur === 0 && v !== 'scam') return; // the practice round coaches the player to pick Scam
-      if ((round as MessageRound).answer !== 'scam') { finish({ verdict: v, revealed: true, quip: null }); return; }
+      if (round.answer !== 'scam') { finish({ verdict: v, revealed: true, quip: null }); return; }
       set({ verdict: v, phase: 'flags', quip: null, wrongVerdict: v === 'legit' });
       top();
     },
     tap: (c: Mark) => {
       if (s.revealed || s.phase !== 'flags') return;
-      const r = round as MessageRound, neutral = typeof c === 'string';
+      const r = round, neutral = typeof c === 'string';
       const clue = neutral ? undefined : r.clues[c];
       if (s.marked.includes(c)) { set(st => ({ marked: st.marked.filter(x => x !== c), quip: null })); return; }
       const demo = s.cur === 0;
@@ -141,7 +135,6 @@ export function useGame() {
       wrongTimer.current = window.setTimeout(() => set({ wrong: null }), 700);
     },
     useHint: () => {
-      if (round.kind === 'call') { set({ callHint: true, hintsUsed: s.hintsUsed + (s.callHint ? 0 : 1) }); return; }
       const r = round;
       // Point at a red flag in the body first; the sender line in the header is hinted last.
       const headCs = (r.sections.find(x => x.s === 'head')?.p ?? []).flatMap(p => (typeof p === 'string' ? [] : [p.c]));
@@ -159,21 +152,11 @@ export function useGame() {
     reveal: () => { if (!s.verdict || !s.marked.length) return; finish({ revealed: true, quip: null }); },
     skipFlags: () => finish({ revealed: true, quip: null }),
 
-    reply: (rp: CallReply) => {
-      const r = round as CallRound;
-      const log: LogLine[] = [...(s.log || [{ who: 'Caller', text: r.steps[0].caller }]), { who: 'You', text: rp.text }];
-      if (rp.end) { set({ log }); endCall(rp.end, rp.title); return; }
-      log.push({ who: 'Caller', text: r.steps[rp.next!].caller });
-      set({ log, step: rp.next! });
-    },
-    hangUp: () => endCall('good'),
-
     next: () => {
       const ni = s.cur + 1;
       if (ni < ROUNDS.length && ROUNDS[ni].lvl === round.lvl) start(ni);
       else { set({ screen: 'complete', doneLevel: round.lvl }); top(); }
     },
-    replay: () => start(s.cur),
   };
 
   return { s, round, actions };

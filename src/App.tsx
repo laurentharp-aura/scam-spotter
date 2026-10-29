@@ -1,7 +1,7 @@
 import { Icon } from './ds/Icon';
 import { settings } from './game/settings';
 import { useGame, type Game, type Screen } from './game/useGame';
-import { C, NAVY } from './ui';
+import { C } from './ui';
 import { HowToPlay, NameScreen, Welcome } from './screens/Onboarding';
 import { Home } from './screens/Home';
 import { Trail } from './screens/Trail';
@@ -12,24 +12,22 @@ import { Help } from './screens/Help';
 
 export default function App() {
   const game = useGame();
-  const { s, round } = game;
-  // Calls play on a dark navy screen until the reveal.
-  const dark = s.screen === 'round' && round.kind === 'call' && !s.revealed;
+  const { s } = game;
 
   return (
     <div style={{
-      minHeight: '100vh', background: dark ? NAVY : C.page, fontFamily: "'Inter',system-ui,sans-serif",
+      minHeight: '100vh', background: C.page, fontFamily: "'Inter',system-ui,sans-serif",
       color: C.ink, letterSpacing: '-0.01em',
     }}>
       <div style={{ zoom: settings.textScale }}>
-        <TopBar game={game} dark={dark} />
+        <TopBar game={game} />
         <main className="ss-wrap">
           {s.screen === 'welcome' && <Welcome game={game} />}
           {s.screen === 'name' && <NameScreen game={game} />}
           {s.screen === 'how' && <HowToPlay game={game} />}
           {s.screen === 'home' && <Home game={game} />}
           {s.screen === 'map' && <Trail game={game} />}
-          {s.screen === 'round' && <RoundScreen game={game} dark={dark} />}
+          {s.screen === 'round' && <RoundScreen game={game} />}
           {s.screen === 'complete' && <LevelComplete game={game} />}
           {s.screen === 'guide' && <Badges game={game} />}
           {s.screen === 'help' && <Help />}
@@ -39,8 +37,8 @@ export default function App() {
   );
 }
 
-function TopBar({ game: { s, actions }, dark }: { game: Game; dark: boolean }) {
-  const fg = dark ? '#fff' : C.ink, bd = dark ? 'rgba(255,255,255,0.3)' : C.border;
+function TopBar({ game: { s, actions } }: { game: Game }) {
+  const fg = C.ink, bd = C.border;
   const backTo: Partial<Record<Screen, Screen>> = { help: s.prev || 'home', name: 'welcome', how: 'name' };
   const pill = { height: 48, borderRadius: 999, border: `1.5px solid ${bd}`, background: 'transparent', fontWeight: 600, color: fg, cursor: 'pointer' } as const;
   const onboarding = ['welcome', 'name', 'how'].includes(s.screen);
@@ -49,13 +47,13 @@ function TopBar({ game: { s, actions }, dark }: { game: Game; dark: boolean }) {
       <div style={{ width: 40, height: 40, borderRadius: 12, background: C.blue, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name="Shield" size={22} /></div>
       <span style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1, textAlign: 'left' }}>
         <span style={{ fontSize: 20, fontWeight: 600, color: fg }}>Scam Spotter</span>
-        <span style={{ fontSize: 13, color: dark ? '#a3aebf' : C.faint }}>by Aura</span>
+        <span style={{ fontSize: 13, color: C.faint }}>by Aura</span>
       </span>
     </>
   );
   const brandBox = { display: 'flex', alignItems: 'center', gap: 10, background: 'none', border: 'none', padding: 0 } as const;
   return (
-    <header style={{ position: 'sticky', top: 'env(safe-area-inset-top, 0px)', zIndex: 5, background: dark ? NAVY : C.page, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : '#dde5ef'}` }}>
+    <header style={{ position: 'sticky', top: 'env(safe-area-inset-top, 0px)', zIndex: 5, background: C.page, borderBottom: '1px solid #dde5ef' }}>
       <div className="ss-wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, paddingBlock: 12, minHeight: 72 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           {/* Phones show the brand only on home; desktop always shows it, and it links home once onboarded. */}
