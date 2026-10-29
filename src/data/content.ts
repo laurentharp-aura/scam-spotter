@@ -36,6 +36,8 @@ export type Species = { name: string; icon: string; call: string; shoo: string }
 export type Round = {
   id: string; lvl: number; kind: Kind; teaser: string; answer: 'scam' | 'legit';
   sections: Section[]; clues: Clue[]; lesson: string; species?: Species;
+  /** What the player knows that the message itself doesn't show, e.g. "You just signed in". */
+  context?: string;
 };
 
 const L = (t: string, c: number, x?: { link: 1 }): Flag => ({ t, c, ...(x ? { link: true } : {}) });
@@ -72,17 +74,16 @@ export const ROUNDS: Round[] = [
     lesson: 'Check your account at your official E-ZPass site — never through a text link.',
     species: { name: 'The Toll Troll', icon: 'NearMe', call: '"Unpaid toll — pay now or else!"', shoo: 'Check your real toll account.' } },
   // ---- Level 2 · Fraud texts
-  { id: 'chase-locked', lvl: 2, kind: 'text', teaser: "A text from Chase saying your account is locked", answer: 'scam',
-    sections: [{ s: 'head', p: [L('+1 (877) 555‑0102', 3)] }, { s: 'meta', p: ['Today 7:02 AM'] },
-      { s: 'body', p: ['Chase Alert: ', L('Your account is LOCKED.', 0), ' Verify now at ', L('https://chase-secure-login.net', 1, { link: 1 }), ' ', L('or it will be closed today.', 2)] }],
+  { id: 'chase-fake-alert', lvl: 2, kind: 'text', teaser: "A text from Chase about a $1,249.99 purchase", answer: 'scam', context: 'You bank with Chase.',
+    sections: [{ s: 'head', p: [L('+1 (469) 555‑0138', 0)] }, { s: 'meta', p: ['Today 3:52 PM'] },
+      { s: 'body', p: ['Chase Fraud Alert: ', L('Unusual $1,249.99 purchase at Best Buy', 1), ' was flagged on your account. ', L('If this was NOT you, call our fraud team now at 1‑888‑555‑0136', 2), ' ', L('to avoid a hold on your card.', 3)] }],
     clues: [
-      { label: 'All-caps alarm', why: 'Scary words make you rush.', quip: 'All-caps warnings are designed to alarm you into acting fast.' },
-      { label: 'Link to "verify"', why: 'Banks ask you to use their app, not a text link.', quip: 'The link goes to chase-secure-login.net. Chase uses chase.com.' },
-      { label: '"Closed today"', why: 'A threat plus a deadline.', quip: 'Threatening to close your account today is a pressure tactic.' },
-      { bad: false, label: 'An 877 number', why: "Toll-free numbers look official, but anyone can get one.", quip: 'Toll-free numbers look official, but anyone can get one.' }],
-    lesson: "Don't tap. Open your bank's app or call the number on your card.",
-    species: { name: 'The Panic Button', icon: 'Exclamation', call: '"Your account is LOCKED!"', shoo: "Don't tap. Open your bank's app yourself." } },
-  { id: 'chase-fraud-alert', lvl: 2, kind: 'text', teaser: "A text from Chase asking if you made a purchase", answer: 'legit',
+      { label: 'A 10-digit number', why: 'Chase fraud alerts come from a short code, not a regular phone number.', quip: 'This came from a regular 10-digit number. Real bank alerts use short codes.' },
+      { label: 'A big, scary charge', why: "A large purchase you didn't make is meant to make you panic.", quip: "A big charge you didn't make is designed to make you react before you think." },
+      { label: 'Call this number', why: 'Real alerts ask you to reply YES or NO, or check the app. A number in a text can go straight to a scammer.', quip: "Real alerts don't ask you to call a number in the text. That number can connect you to the scammer." },
+      { label: 'Hold threat', why: 'Threatening your card pushes you to act before you check.', quip: 'The threat of a hold on your card is pressure to act now.' }],
+    lesson: "Don't call the number in the text. Open the Chase app or call the number on the back of your card." },
+  { id: 'chase-fraud-alert', lvl: 2, kind: 'text', teaser: "A text from Chase asking if you made a purchase", answer: 'legit', context: 'You bank with Chase.',
     sections: [{ s: 'head', p: [L('24273', 0)] }, { s: 'meta', p: ['Today 3:41 PM'] },
       { s: 'body', p: ['Chase Fraud Alert: ', L('Did you attempt a $86.40 purchase at Target on 10/29?', 1), ' ', L('Reply YES or NO.', 2), ' ', L("We'll never ask for your PIN or a code by text.", 3), ' Msg&data rates may apply. Reply STOP to opt out.'] }],
     clues: [
@@ -91,7 +92,7 @@ export const ROUNDS: Round[] = [
       { bad: false, label: 'Only asks YES or NO', why: 'No link, no code, no personal details.' },
       { bad: false, label: "Says what it won't ask for", why: 'Real alerts remind you they never ask for your PIN or a code.' }],
     lesson: 'Reply YES or NO, or check the charge in the Chase app. If someone then calls asking for a code, hang up.' },
-  { id: 'google-code', lvl: 2, kind: 'text', teaser: "A Google verification code, right after you signed in on your laptop", answer: 'legit',
+  { id: 'google-code', lvl: 2, kind: 'text', teaser: "A Google verification code, right after you signed in on your laptop", answer: 'legit', context: 'You just signed in to Gmail on your laptop.',
     sections: [{ s: 'head', p: [L('22000', 0)] }, { s: 'meta', p: ['Today 10:02 AM'] },
       { s: 'body', p: [L('G-482915', 1), ' is your Google verification code. ', L("Don't share it with anyone.", 2)] }],
     clues: [
@@ -142,7 +143,7 @@ export const ROUNDS: Round[] = [
       { bad: false, label: "Her real account", why: 'It may really be hers — accounts get hacked.' }],
     lesson: 'Call Linda on her real number. Then report the account.',
     species: { name: 'The Hijacked Friend', icon: 'User', call: '"Can you send me a quick gift card?"', shoo: 'Call your friend to check.' } },
-  { id: 'marketplace-buyer', lvl: 4, kind: 'dm', teaser: "A Messenger message about the bike you're selling on Marketplace", answer: 'legit',
+  { id: 'marketplace-buyer', lvl: 4, kind: 'dm', teaser: "A Messenger message about the bike you're selling on Marketplace", answer: 'legit', context: "You listed your kid's bike on Facebook Marketplace yesterday.",
     sections: [{ s: 'head', p: [L('Maria Lopez', 0)] }, { s: 'meta', p: ["Messenger · Marketplace · Kids' bike, $40"] },
       { s: 'body', p: ['Hi! ', L('Is the bike still available?', 1), ' ', L('I can come look at it Saturday morning', 2), ' and ', L('pay cash when I pick it up', 3), '. What area are you in?'] }],
     clues: [
@@ -205,7 +206,7 @@ export const ROUNDS: Round[] = [
       { label: '"Press 1"', why: 'Pressing a key connects you straight to the scammer.' },
       { label: 'Arrest threat', why: 'Real agencies never threaten arrest by voicemail.' }],
     lesson: "Delete it. Don't call back or press anything. If you're worried, call Social Security at the number on ssa.gov." },
-  { id: 'chase-voicemail', lvl: 6, kind: 'voicemail', teaser: "A voicemail from Chase about your card", answer: 'legit',
+  { id: 'chase-voicemail', lvl: 6, kind: 'voicemail', teaser: "A voicemail from Chase about your card", answer: 'legit', context: 'You bank with Chase. Its number is saved in your contacts.',
     sections: [{ s: 'head', p: [L('Chase', 0)] }, { s: 'meta', p: ['Yesterday 4:12 PM · 0:24'] },
       { s: 'body', p: ['Hi, this is Chase calling about ', L('recent activity on your card ending in 4412', 1), '. ', L('Please review it in the Chase Mobile app, or call the number on the back of your card', 2), '. ', L('We will never ask for your PIN or a one-time code.', 3), ' Thank you.'] }],
     clues: [

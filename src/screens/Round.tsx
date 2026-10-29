@@ -200,7 +200,13 @@ function MessageRoundView({ game, round }: { game: Game; round: Round }) {
       <div className="ss-round-msg" style={{ gridArea: 'msg' }}>
         <div className="ss-stage">
           <Glow />
-          <div className="ss-stage-inner">
+          <div className="ss-stage-inner" style={col(14)}>
+            {round.context && (
+              <div className="ss-mock" style={{ display: 'flex', gap: 10, alignItems: 'flex-start', margin: '0 auto', width: '100%', background: 'rgba(255,255,255,0.75)', borderRadius: 16, padding: '10px 14px', fontSize: 15, lineHeight: 1.4, color: C.ink }}>
+                <span style={{ color: C.blue, display: 'flex', paddingTop: 1 }}><Icon name="Info" size={18} /></span>
+                <span><strong style={{ fontWeight: 600 }}>What's happening: </strong>{round.context}</span>
+              </div>
+            )}
             {round.kind === 'text' ? <TextMessage game={game} round={round} /> : round.kind === 'voicemail' ? <VoicemailCard game={game} round={round} /> : <MessageCard game={game} round={round} />}
           </div>
         </div>
