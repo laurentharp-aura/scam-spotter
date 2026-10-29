@@ -55,6 +55,7 @@ export function Home({ game: { s, actions } }: { game: Game }) {
           ))}
         </div>
       </div>
+      <span style={{ fontSize: 12, color: C.faint, textAlign: 'center' }}>Version {__BUILD__}</span>
     </div>
   );
 }
