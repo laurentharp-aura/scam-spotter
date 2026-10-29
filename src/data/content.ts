@@ -1,4 +1,5 @@
 import type { IconName } from '../ds/Icon';
+import type { VoiceStyle } from '../game/speech';
 
 export type Kind = 'text' | 'email' | 'dm' | 'social' | 'listing' | 'voicemail';
 
@@ -40,6 +41,8 @@ export type Round = {
   context?: string;
   /** Optional photo (post/listing) and sender avatar, as paths under public/images/. */
   image?: string; avatar?: string;
+  /** Voicemails: how the read-aloud voice should sound. */
+  voice?: VoiceStyle;
 };
 
 const L = (t: string, c: number, x?: { link: 1 }): Flag => ({ t, c, ...(x ? { link: true } : {}) });
@@ -198,7 +201,7 @@ export const ROUNDS: Round[] = [
     lesson: 'Only buy what you can see in person, and pay when you pick it up.',
     species: { name: 'The Too-Good Deal', icon: 'Cash', call: '"Must sell today — just send a deposit."', shoo: 'See it in person before you pay.' } },
   // ---- Level 6 · Voicemails
-  { id: 'ssa-robocall', lvl: 6, kind: 'voicemail', teaser: "An automated voicemail about your Social Security number", answer: 'scam',
+  { id: 'ssa-robocall', lvl: 6, kind: 'voicemail', voice: { gender: 'female', rate: 0.92, pitch: 0.8 }, teaser: "An automated voicemail about your Social Security number", answer: 'scam',
     sections: [{ s: 'head', p: [L('+1 (202) 555‑0168', 0)] }, { s: 'meta', p: ['Today 8:47 AM · 0:31'] },
       { s: 'body', p: [L('This is an automated message from the Social Security Administration.', 1), ' ', L('Your Social Security number has been suspended', 2), ' due to suspicious activity. ', L('Press 1 now to speak to an officer', 3), ', ', L('or a warrant will be issued for your arrest.', 4)] }],
     clues: [
@@ -208,7 +211,7 @@ export const ROUNDS: Round[] = [
       { label: '"Press 1"', why: 'Pressing a key connects you straight to the scammer.' },
       { label: 'Arrest threat', why: 'Real agencies never threaten arrest by voicemail.' }],
     lesson: "Delete it. Don't call back or press anything. If you're worried, call Social Security at the number on ssa.gov." },
-  { id: 'chase-voicemail', lvl: 6, kind: 'voicemail', teaser: "A voicemail from Chase about your card", answer: 'legit', context: 'You bank with Chase. Its number is saved in your contacts.',
+  { id: 'chase-voicemail', lvl: 6, kind: 'voicemail', voice: { gender: 'female', rate: 1 }, teaser: "A voicemail from Chase about your card", answer: 'legit', context: 'You bank with Chase. Its number is saved in your contacts.',
     sections: [{ s: 'head', p: [L('Chase', 0)] }, { s: 'meta', p: ['Yesterday 4:12 PM · 0:24'] },
       { s: 'body', p: ['Hi, this is Chase calling about ', L('recent activity on your card ending in 4412', 1), '. ', L('Please review it in the Chase Mobile app, or call the number on the back of your card', 2), '. ', L('We will never ask for your PIN or a one-time code.', 3), ' Thank you.'] }],
     clues: [
@@ -217,7 +220,7 @@ export const ROUNDS: Round[] = [
       { bad: false, label: "Doesn't give its own callback number", why: 'It sends you to the app or the number on your card.' },
       { bad: false, label: "Says what it won't ask for", why: 'Real banks remind you they never ask for your PIN or codes.' }],
     lesson: 'Check the activity in the Chase app, or call the number on the back of your card. Never use a number left in a voicemail.' },
-  { id: 'wells-fargo-voicemail', lvl: 6, kind: 'voicemail', teaser: "A voicemail from Wells Fargo's fraud department", answer: 'scam',
+  { id: 'wells-fargo-voicemail', lvl: 6, kind: 'voicemail', voice: { gender: 'male', rate: 1.05 }, teaser: "A voicemail from Wells Fargo's fraud department", answer: 'scam',
     sections: [{ s: 'head', p: [L('+1 (888) 555‑0193', 0)] }, { s: 'meta', p: ['Today 11:05 AM · 0:28'] },
       { s: 'body', p: ["Hi, this is Daniel from the Wells Fargo fraud department. ", L("We've placed a hold on your card.", 1), ' ', L('Call us back at 1‑888‑555‑0193', 2), ' ', L('within the hour', 3), ', and ', L('have your card number and PIN ready', 4), '.'] }],
     clues: [

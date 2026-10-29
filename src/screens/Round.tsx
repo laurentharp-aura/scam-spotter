@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import { BADGES, KINDS, ROUNDS, isBad, type Round, type Part, type SectionKind } from '../data/content';
 import { Icon, type IconName } from '../ds/Icon';
 import { settings } from '../game/settings';
+import { speechSupported, useSpeech } from '../game/speech';
 import { demoTarget, isDone, levelSize, roundNumber, roundsInLevel, subName, type Game, type GameState, type Mark } from '../game/useGame';
 import { C, Card, FONT, Pill, PrimaryButton, SHADOW, TextButton, col, kicker } from '../ui';
 
@@ -132,6 +133,7 @@ const G = {
   phone: 'M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z',
   trash: 'M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z',
   play: 'M8 5v14l11-7z',
+  stop: 'M7 7h10v10H7z',
   like: 'M2 21h4V9H2v12zm20-11a2 2 0 0 0-2-2h-6.3l1-4.6v-.3c0-.4-.2-.8-.4-1.1L13.2 1 6.6 7.6c-.4.3-.6.8-.6 1.4v10a2 2 0 0 0 2 2h9c.8 0 1.5-.5 1.8-1.2l3-7.1c.1-.2.2-.5.2-.7v-2z',
   share: 'M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z',
 };
@@ -140,6 +142,11 @@ const G = {
 function VoicemailCard({ game, round }: { game: Game; round: Round }) {
   const [when, length = '0:30'] = String(secOf(round, 'meta')[0] ?? 'Today').split(' · ');
   const blue = '#007aff', grey = '#8e8e93';
+  // Read the transcript aloud with the browser's voices; the scrubber follows along.
+  const script = secOf(round, 'body').map(p => subName(game.s, typeof p === 'string' ? p : p.t)).join('');
+  const { playing, progress, toggle } = useSpeech(script, round.voice);
+  const [m, sec] = length.split(':').map(Number), total = (m || 0) * 60 + (sec || 0);
+  const clock = (t: number) => `${Math.floor(t / 60)}:${String(Math.round(t % 60)).padStart(2, '0')}`;
   const circle = (bg: string, d: string) => <span style={{ width: 40, height: 40, borderRadius: '50%', background: bg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Glyph d={d} /></span>;
   return (
     <div style={frame}>
@@ -153,12 +160,17 @@ function VoicemailCard({ game, round }: { game: Game; round: Round }) {
       </div>
       <div style={col(4, { padding: '6px 20px 0' })}>
         <div style={{ position: 'relative', height: 3, borderRadius: 2, background: '#d1d1d6' }}>
-          <span style={{ position: 'absolute', left: 0, top: -3, width: 9, height: 9, borderRadius: '50%', background: '#8e8e93' }} />
+          <span style={{ position: 'absolute', left: 0, top: 0, height: 3, width: `${progress * 100}%`, borderRadius: 2, background: '#8e8e93' }} />
+          <span style={{ position: 'absolute', left: `calc(${progress * 100}% - 4px)`, top: -3, width: 9, height: 9, borderRadius: '50%', background: '#8e8e93' }} />
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 600, color: '#3c3c43' }}><span>0:00</span><span>−{length}</span></div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 600, color: '#3c3c43', fontVariantNumeric: 'tabular-nums' }}><span>{clock(total * progress)}</span><span>−{clock(total * (1 - progress))}</span></div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px 16px' }}>
-        <span style={{ color: blue, display: 'flex' }}><Glyph d={G.play} size={30} /></span>
+        {speechSupported
+          ? <button onClick={toggle} aria-label={playing ? 'Stop voicemail' : 'Play voicemail'} style={{ display: 'flex', alignItems: 'center', gap: 8, border: 'none', background: 'none', padding: 0, color: blue, cursor: 'pointer', fontSize: 15, fontWeight: 600 }}>
+              <Glyph d={playing ? G.stop : G.play} size={30} />{playing ? '' : progress === 0 ? 'Play' : 'Replay'}
+            </button>
+          : <span style={{ color: blue, display: 'flex' }}><Glyph d={G.play} size={30} /></span>}
         <span style={{ display: 'flex', gap: 14 }}>{circle(blue, G.speaker)}{circle(blue, G.phone)}{circle('#ff3b30', G.trash)}</span>
       </div>
       <div style={col(6, { padding: '0 20px 22px' })}>
