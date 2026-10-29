@@ -31,7 +31,7 @@ input::placeholder { color: #8a8a94; }
 
 /* ---------------------------------------------------------------- layout
    Desktop-first web layout that still stacks to one column on phones (< 900px). */
-.ss-wrap { width: 100%; max-width: 1160px; margin: 0 auto; padding-inline: 20px; }
+.ss-wrap { width: 100%; max-width: 1760px; margin: 0 auto; padding-inline: 20px; }
 .ss-narrow { width: 100%; max-width: 640px; margin-inline: auto; }
 .ss-fill { min-height: calc(100vh - 72px); }
 .ss-desktop { display: none !important; }
@@ -46,15 +46,20 @@ input::placeholder { color: #8a8a94; }
 /* The message sits on a dark stage with the Solstice glow, like aura.com's product cards. */
 .ss-stage { position: relative; overflow: hidden; border-radius: 32px; background: #0a0a0b; border: 1px solid rgba(255,255,255,0.10); padding: 28px 14px 40px; }
 .ss-stage .ss-glow { bottom: -70%; height: 110%; }
+.ss-stage-inner { position: relative; width: 100%; }
+.ss-mock { max-width: 460px; }
 
 @media (min-width: 900px) {
-  .ss-wrap { padding-inline: 40px; }
+  .ss-wrap { padding-inline: clamp(40px, 4vw, 72px); }
   .ss-fill { min-height: 0; padding-top: 32px; }
   .ss-desktop { display: flex !important; }
   .ss-narrow-wide { max-width: 960px; }
 
   .ss-home { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: start; gap: 32px; }
   .ss-home > :first-child { grid-column: 1 / -1; }
+  /* Fill the screen height: the hero card and badges stretch. */
+  .ss-home { grid-template-rows: auto 1fr; min-height: calc(100vh - 72px); align-items: stretch; }
+  .ss-home-hero { flex: 1; }
 
   .ss-welcome { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; column-gap: 56px; padding: 72px 64px 88px; }
   .ss-notices { gap: 16px; padding-top: 24px; }
@@ -63,12 +68,18 @@ input::placeholder { color: #8a8a94; }
   .ss-badge-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
   .ss-round {
-    grid-template-columns: minmax(0, 1fr) 440px; grid-template-rows: auto 1fr;
-    grid-template-areas: "msg head" "msg ctrl"; column-gap: 48px; row-gap: 20px; align-items: start; padding-top: 12px;
+    grid-template-columns: minmax(0, 1.35fr) minmax(400px, 1fr); grid-template-rows: auto 1fr;
+    grid-template-areas: "msg head" "msg ctrl"; column-gap: clamp(40px, 4vw, 80px); row-gap: 24px; align-items: start; padding-top: 20px;
   }
   .ss-round-msg { position: sticky; top: 96px; }
-  .ss-stage { padding: 56px 40px 72px; }
+  /* The stage fills the screen height and centres the message. */
+  .ss-stage { padding: 56px 40px 72px; min-height: calc(100vh - 136px); display: flex; align-items: center; justify-content: center; }
+  .ss-mock { max-width: 520px; }
 }
+
+/* Big screens: scale the phone mockups up so they read at a glance. */
+@media (min-width: 1300px) { .ss-stage-inner { zoom: 1.15; } }
+@media (min-width: 1600px) { .ss-stage-inner { zoom: 1.3; } }
 
 @keyframes ss-pop { 0% { transform: scale(0.6); opacity: 0 } 70% { transform: scale(1.08) } 100% { transform: scale(1); opacity: 1 } }
 @keyframes ss-rise { 0% { transform: translateY(8px); opacity: 0 } 100% { transform: translateY(0); opacity: 1 } }

@@ -125,7 +125,7 @@ function TextMessage({ game, round }: { game: Game; round: Round }) {
   const unknown = /^\+/.test(typeof first === 'string' ? first : first?.t ?? '');
   const ios: CSSProperties = { fontFamily: "-apple-system,'SF Pro Text',system-ui,var(--font-sans)" };
   return (
-    <div style={{ background: '#fff', borderRadius: 28, boxShadow: SHADOW, overflow: 'hidden', maxWidth: 440, margin: '0 auto', ...ios }}>
+    <div className="ss-mock" style={{ background: '#fff', borderRadius: 28, boxShadow: SHADOW, overflow: 'hidden', margin: '0 auto', ...ios }}>
       <div style={{ background: '#f6f6f6', borderBottom: '1px solid #d1d1d6', padding: '12px 16px 10px', display: 'grid', gridTemplateColumns: '40px 1fr 40px', alignItems: 'center' }}>
         <span style={{ color: '#007aff', display: 'flex' }}><Icon name="ChevronLeft" size={26} /></span>
         <div style={col(4, { alignItems: 'center' })}>
@@ -162,7 +162,7 @@ function VoicemailCard({ game, round }: { game: Game; round: Round }) {
   const ios: CSSProperties = { fontFamily: "-apple-system,'SF Pro Text',system-ui,var(--font-sans)" };
   const blue = '#007aff', grey = '#8e8e93';
   return (
-    <div style={{ background: '#fff', borderRadius: 28, boxShadow: SHADOW, overflow: 'hidden', maxWidth: 480, margin: '0 auto', ...ios }}>
+    <div className="ss-mock" style={{ background: '#fff', borderRadius: 28, boxShadow: SHADOW, overflow: 'hidden', margin: '0 auto', ...ios }}>
       <div style={col(2, { padding: '18px 20px 12px' })}>
         <span style={{ fontSize: 13, fontWeight: 600, color: grey, letterSpacing: '0.04em' }}>VOICEMAIL</span>
         <span style={{ fontSize: 22, fontWeight: 700, color: '#000', lineHeight: 1.6 }}>
@@ -227,7 +227,7 @@ const DEMO_COACH: [string, string][] = [
 ];
 
 const stepLabel = (n: 1 | 2) => <span style={kicker()}>STEP {n} OF 2</span>;
-const title = (t: string) => <span style={{ ...DISPLAY, fontSize: 36, lineHeight: 1.05, textWrap: 'balance' }}>{t}</span>;
+const title = (t: string) => <span style={{ ...DISPLAY, fontSize: 'clamp(34px, 3.2vw, 54px)', lineHeight: 1.04, textWrap: 'balance' }}>{t}</span>;
 const subline = (t: string) => <span style={{ fontSize: 18, color: C.sub, lineHeight: 1.45 }}>{t}</span>;
 
 /**
@@ -255,7 +255,7 @@ function MessageRoundView({ game, round }: { game: Game; round: Round }) {
       <div className="ss-round-msg" style={{ gridArea: 'msg' }}>
         <div className="ss-stage">
           <Glow />
-          <div style={{ position: 'relative', width: '100%' }}>
+          <div className="ss-stage-inner">
             {round.kind === 'text' ? <TextMessage game={game} round={round} /> : round.kind === 'voicemail' ? <VoicemailCard game={game} round={round} /> : <MessageCard game={game} round={round} />}
           </div>
         </div>
@@ -334,7 +334,7 @@ function VerdictControls({ game: { s, actions } }: { game: Game }) {
         const guided = demo && id === 'scam', off = demo && id !== 'scam';
         return (
           <button key={id} className="ss-choice" onClick={() => actions.choose(id)} disabled={off} style={{
-            ...DISPLAY, minHeight: 76, borderRadius: 999, border: '2px solid transparent', background: '#fff', boxShadow: 'none',
+            ...DISPLAY, minHeight: 'clamp(76px, 6vw, 96px)', borderRadius: 999, border: '2px solid transparent', background: '#fff', boxShadow: 'none',
             outline: guided ? '3px solid #FFA722' : 'none', outlineOffset: 3, opacity: off ? 0.45 : 1,
             fontSize: 24, cursor: off ? 'default' : 'pointer', color: C.ink, transition: 'transform .15s, box-shadow .15s',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
@@ -374,7 +374,7 @@ function RevealHead({ game: { s } }: { game: Game }) {
   return (
     <div data-screen-label="Round reveal" style={col(10, { alignItems: 'flex-start', paddingTop: 4 })}>
       <Pill good={o.good} style={{ letterSpacing: '0.04em', animation: 'ss-rise .3s ease-out both' }}>{o.stamp}</Pill>
-      <span style={{ ...DISPLAY, fontSize: 32, lineHeight: 1.08, textWrap: 'pretty' }}>{o.title}</span>
+      <span style={{ ...DISPLAY, fontSize: 'clamp(32px, 3vw, 48px)', lineHeight: 1.06, textWrap: 'pretty' }}>{o.title}</span>
     </div>
   );
 }

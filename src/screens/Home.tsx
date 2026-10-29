@@ -21,15 +21,15 @@ export function Home({ game: { s, actions } }: { game: Game }) {
         {greet}<br /><span style={{ color: C.sub }}>{sub}</span>
       </h1>
 
-      <div style={col(16)}>
-        <div style={{ position: 'relative', overflow: 'hidden', background: '#0a0a0b', border: `1px solid ${C.hair}`, borderRadius: 32, minHeight: 300 }}>
+      <div className="ss-home-main" style={col(16)}>
+        <div className="ss-home-hero" style={{ position: 'relative', overflow: 'hidden', background: '#0a0a0b', border: `1px solid ${C.hair}`, borderRadius: 32, minHeight: 300, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <Glow />
-          <div style={col(16, { position: 'relative', padding: 32 })}>
+          <div style={col(16, { position: 'relative', padding: 'clamp(28px, 3.5vw, 56px)' })}>
             <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: '0.08em', color: C.peach }}>{allDone ? 'ALL ROUNDS COMPLETE' : isNew ? 'GET STARTED' : 'YOUR NEXT ROUND'}</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
               {!allDone && <span style={{ width: 56, height: 56, borderRadius: '50%', background: '#fff', color: C.ink, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name={KINDS[nr.kind][1]} size={26} /></span>}
               <div style={col(4)}>
-                <span style={{ ...DISPLAY, fontSize: 32, lineHeight: 1.08 }}>{allDone ? 'Replay any round from the trail' : isNew ? "Let's start with a practice text" : LEVELS[nr.lvl - 1][3]}</span>
+                <span style={{ ...DISPLAY, fontSize: 'clamp(30px, 3.2vw, 52px)', lineHeight: 1.04 }}>{allDone ? 'Replay any round from the trail' : isNew ? "Let's start with a practice text" : LEVELS[nr.lvl - 1][3]}</span>
                 {!allDone && <span style={{ fontSize: 15, color: C.sub }}>Level {nr.lvl} · Round {roundNumber(nIdx)} of {levelSize(nr.lvl)}</span>}
               </div>
             </div>
@@ -52,7 +52,7 @@ export function Home({ game: { s, actions } }: { game: Game }) {
         </button>
       </div>
 
-      <div style={col(18, { background: C.surface, border: `1px solid ${C.hair}`, borderRadius: 32, padding: 26 })}>
+      <div className="ss-home-badges" style={col(18, { background: C.surface, border: `1px solid ${C.hair}`, borderRadius: 32, padding: 'clamp(24px, 2.4vw, 40px)' })}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
           <div style={col(2)}>
             <span style={{ ...DISPLAY, fontSize: 24 }}>Your badges</span>
@@ -60,10 +60,10 @@ export function Home({ game: { s, actions } }: { game: Game }) {
           </div>
           <button className="ss-outline" onClick={() => actions.go('guide')} style={{ border: '1.5px solid rgba(255,255,255,0.55)', borderRadius: 999, background: 'none', padding: '0 16px', fontSize: 15, fontWeight: 600, color: C.text, cursor: 'pointer', minHeight: 40, whiteSpace: 'nowrap' }}>See all</button>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '18px 8px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '18px 8px', flex: 1, alignContent: 'space-evenly' }}>
           {badges.map((b, li) => (
             <button key={b.name} className="ss-lift" onClick={() => actions.openBadge(li)} style={{ border: 'none', background: 'none', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, cursor: 'pointer', color: b.earned ? C.text : C.faint }}>
-              <Medallion b={b} size={64} core={40} icon={24} />
+              <Medallion b={b} size={76} core={47} icon={28} />
               <span style={{ fontSize: 14, fontWeight: 500, lineHeight: 1.2, textAlign: 'center' }}>{b.name}</span>
             </button>
           ))}
