@@ -120,11 +120,11 @@ export function useGame() {
     },
 
     beginRound: () => { set({ phase: round.kind === 'call' ? 'call' : 'verdict' }); top(); },
-    pickVerdict: (v: Verdict) => set({ verdict: v }),
-    decide: () => {
-      if (!s.verdict) return;
-      if ((round as MessageRound).answer !== 'scam') { finish({ revealed: true, quip: null }); return; }
-      set({ phase: 'flags', quip: null, wrongVerdict: s.verdict === 'legit' });
+    /** One tap decides: real messages go straight to the reveal, scams go on to flagging. */
+    choose: (v: Verdict) => {
+      if (s.cur === 0 && v !== 'scam') return; // the practice round coaches the player to pick Scam
+      if ((round as MessageRound).answer !== 'scam') { finish({ verdict: v, revealed: true, quip: null }); return; }
+      set({ verdict: v, phase: 'flags', quip: null, wrongVerdict: v === 'legit' });
       top();
     },
     tap: (c: Mark) => {

@@ -50,8 +50,8 @@ export function NameScreen({ game: { s, actions } }: { game: Game }) {
 
 const HOW_STEPS = [
   { n: 1, title: 'Read a pretend message', body: 'Texts, emails, posts, and calls.', bg: '#ebf2ff' },
-  { n: 2, title: 'Tap anything that seems off', body: 'An odd link, a deadline, a request for money.', bg: '#fff5e5' },
-  { n: 3, title: 'Make the call', body: 'Real or scam — then see why.', bg: '#fff5e5' },
+  { n: 2, title: 'Decide: real or scam?', body: 'One tap. Some messages really are real.', bg: '#fff5e5' },
+  { n: 3, title: 'Tap the red flags', body: 'If it’s a scam, tap what gave it away — an odd link, a deadline, a request for money.', bg: '#fff5e5' },
 ];
 
 export function HowToPlay({ game: { s, actions } }: { game: Game }) {

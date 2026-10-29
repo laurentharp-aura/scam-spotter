@@ -84,7 +84,9 @@ function pieces(parts: Part[], keyPrefix: string, canTap: boolean, s: GameState)
 
 function Pieces({ list, game, round, im, head }: { list: Piece[]; game: Game; round: MessageRound; im: boolean; head?: boolean }) {
   const { s, actions } = game;
-  const dt = demoTarget(s), rev = s.revealed, active = !rev && s.phase === 'flags';
+  const rev = s.revealed, active = !rev && s.phase === 'flags';
+  // The practice round glows one target at a time, and only once the player is flagging.
+  const dt = active ? demoTarget(s) : undefined, underline = active && s.cur !== 0;
   return (
     <>
       {list.map((p, i) => {
@@ -101,7 +103,7 @@ function Pieces({ list, game, round, im, head }: { list: Piece[]; game: Game; ro
           outline: hinted ? '3px solid #FFA722' : (settings.outlineTappables && !rev && !m) ? '2px dashed #6699ff' : missed ? '2px dashed #cf8415' : 'none',
           boxDecorationBreak: 'clone', WebkitBoxDecorationBreak: 'clone',
           color: head ? undefined : p.link ? (im ? '#007aff' : C.blue) : 'inherit',
-          textDecoration: p.link ? 'underline' : active ? 'underline dotted #a3aebf' : 'none', textUnderlineOffset: 5,
+          textDecoration: p.link ? 'underline' : underline ? 'underline dotted #a3aebf' : 'none', textUnderlineOffset: 5,
         };
         return (
           <span key={i} role="button" tabIndex={active ? 0 : -1} className={active && !m ? 'ss-tap' : undefined} onClick={() => actions.tap(p.c)}
@@ -184,12 +186,17 @@ function MessageCard({ game, round }: { game: Game; round: MessageRound }) {
   );
 }
 
-const DEMO_COACH = [
-  'Tap the glowing phone number. Real FedEx texts come from short codes, not random numbers.',
-  'Now tap the glowing fee. A tiny fee is bait to get your card number.',
-  'Tap the deadline. Rushing you is a classic trick.',
-  'Last one — tap the link. FedEx lives at fedex.com, not fdx-ship.co.',
+/** Practice-round coaching per FedEx flag: [what to tap, why it matters]. */
+const DEMO_COACH: [string, string][] = [
+  ['Tap the glowing phone number.', 'Real FedEx texts come from short codes, not random 10-digit numbers.'],
+  ['Tap the glowing fee.', 'A tiny fee is bait to get your card number.'],
+  ['Tap the glowing deadline.', 'Rushing you is a classic trick.'],
+  ['Tap the glowing link.', 'FedEx lives at fedex.com, not fdx-ship.co.'],
 ];
+
+const stepLabel = (n: 1 | 2) => <span style={kicker()}>STEP {n} OF 2</span>;
+const title = (t: string) => <span style={{ fontSize: 28, fontWeight: 600, lineHeight: 1.15, textWrap: 'balance' }}>{t}</span>;
+const subline = (t: string) => <span style={{ fontSize: 18, color: C.muted, lineHeight: 1.45 }}>{t}</span>;
 
 /**
  * Message rounds use three areas: `head` (step title), `msg` (the message) and `ctrl` (choices / results).
@@ -212,10 +219,13 @@ function MessageRoundView({ game, round }: { game: Game; round: MessageRound }) 
 }
 
 function FlagsHead({ game: { s }, round }: { game: Game; round: MessageRound }) {
-  const demo = s.cur === 0, tutorial = round.lvl === 1;
+  const demo = s.cur === 0, counted = round.lvl === 1 || s.wrongVerdict;
   const badCount = round.clues.filter(isBad).length;
   const dt = demoTarget(s);
-  const prompt = s.wrongVerdict || (tutorial && !demo) ? `Find the ${badCount} red flags.` : demo ? `Now find the ${badCount} red flags.` : 'What gave it away?';
+  const [what, why] = demo
+    ? (dt != null ? DEMO_COACH[dt] : [`You found all ${badCount}.`, 'Tap See results to learn what each one means.'])
+    : [counted ? `Tap the ${badCount} red flags.` : 'Tap what gave it away.',
+       s.wrongVerdict ? 'Learning them now makes the next one easier.' : 'Tap any words in the message that look off.'];
   return (
     <div style={col(8)}>
       {s.wrongVerdict && (
@@ -227,18 +237,9 @@ function FlagsHead({ game: { s }, round }: { game: Game; round: MessageRound }) 
           </div>
         </div>
       )}
-      <span style={kicker()}>{demo ? "PRACTICE ROUND · WE'LL GUIDE YOU" : `${roundLine(s)} · STEP 2 OF 2`}</span>
-      <span style={{ fontSize: 28, fontWeight: 600, lineHeight: 1.1 }}>{prompt}</span>
-      {demo ? (
-        <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', background: '#fff', borderRadius: 16, boxShadow: SHADOW, padding: '12px 14px' }}>
-          <span style={{ width: 28, height: 28, borderRadius: '50%', background: '#ebf2ff', color: C.navy, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontWeight: 500, fontSize: 14 }}>{dt != null ? dt + 1 : '✓'}</span>
-          <span style={{ fontSize: 17, lineHeight: 1.4 }}>{dt != null ? DEMO_COACH[dt] : 'You found all 4! Tap the blue button to keep going.'}</span>
-        </div>
-      ) : (
-        <span style={{ fontSize: 17, color: C.muted, lineHeight: 1.4 }}>
-          {s.wrongVerdict ? 'Tap the parts that give it away. Learning them now makes the next one easier.' : 'Tap the words or phrases that seem off.'}
-        </span>
-      )}
+      {stepLabel(2)}
+      {title(what)}
+      {subline(why)}
     </div>
   );
 }
@@ -247,22 +248,22 @@ function FlagsControls({ game: { s, actions }, round }: { game: Game; round: Mes
   const demo = s.cur === 0, counted = round.lvl === 1 || s.wrongVerdict;
   const badCount = round.clues.filter(isBad).length;
   const foundBad = s.marked.filter(c => typeof c === 'number' && isBad(round.clues[c])).length;
+  // Only show the continue button once it can be used.
+  const canContinue = demo ? foundBad === badCount : s.marked.length > 0;
   return (
     <div style={col(14)}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 36, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 44, flexWrap: 'wrap' }}>
         {counted && Array.from({ length: badCount }, (_, i) => {
           const on = foundBad > i;
-          return <span key={i} style={{ width: 30, height: 30, borderRadius: '50%', border: `1.5px ${on ? 'solid' : 'dashed'} ${C.border}`, background: on ? C.orange : C.line, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 500, fontSize: 14 }}>{on ? i + 1 : ''}</span>;
+          return <span key={i} style={{ width: 30, height: 30, borderRadius: '50%', border: on ? 'none' : `1.5px solid ${C.border}`, background: on ? C.orange : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 500, fontSize: 14 }}>{on ? i + 1 : ''}</span>;
         })}
         <span style={{ fontSize: 17, fontWeight: 600, marginLeft: 4, flex: 1 }}>
-          {counted ? (foundBad === badCount ? `All ${badCount} found!` : `${foundBad} of ${badCount} found`) : (s.marked.length ? `${s.marked.length} marked` : 'Nothing marked yet')}
+          {counted ? `${foundBad} of ${badCount} found` : `${s.marked.length} marked`}
         </span>
-        {!demo && <button onClick={actions.useHint} style={{ minHeight: 44, padding: '0 14px', borderRadius: 999, border: '1.5px dashed #a3aebf', background: '#fff', fontSize: 16, fontWeight: 500, color: C.ink, cursor: 'pointer' }}>Hint</button>}
+        {!demo && <button onClick={actions.useHint} style={{ minHeight: 44, padding: '0 16px', borderRadius: 999, border: `1.5px solid ${C.border}`, background: '#fff', fontSize: 16, fontWeight: 500, color: C.ink, cursor: 'pointer' }}>Hint</button>}
       </div>
       {s.quip && <div style={{ background: C.ink, color: '#fff', borderRadius: 18, padding: '14px 16px', fontSize: 18, lineHeight: 1.45, animation: 'ss-rise .25s ease-out' }}>{s.quip}</div>}
-      <PrimaryButton size={19} shadow={false} onClick={actions.reveal} disabled={!s.marked.length} style={{ opacity: s.marked.length ? 1 : 0.4 }}>
-        {s.marked.length ? 'See results' : 'Tap a red flag to continue'}
-      </PrimaryButton>
+      {canContinue && <PrimaryButton size={19} shadow={false} onClick={actions.reveal} style={{ animation: 'ss-rise .25s ease-out' }}>See results</PrimaryButton>}
       {!demo && <TextButton onClick={actions.skipFlags}>Skip — show me the answer</TextButton>}
     </div>
   );
@@ -270,14 +271,10 @@ function FlagsControls({ game: { s, actions }, round }: { game: Game; round: Mes
 
 function VerdictHead({ game: { s } }: { game: Game }) {
   return (
-    <div style={col(12)}>
-      <span style={kicker()}>{`${roundLine(s)} · STEP 1 OF 2`}</span>
-      <span style={{ fontSize: 26, fontWeight: 600, lineHeight: 1.1 }}>Is this real or a scam?</span>
-      {s.cur === 0 && (
-        <div style={{ background: C.ink, color: '#fff', borderRadius: 16, padding: '12px 14px', fontSize: 17, lineHeight: 1.4 }}>
-          {s.verdict === 'scam' ? 'Now tap “Lock it in.”' : 'Read it closely. Something is off — this one is a scam. Tap Scam.'}
-        </div>
-      )}
+    <div style={col(8)}>
+      {stepLabel(1)}
+      {title('Is this real or a scam?')}
+      {subline(s.cur === 0 ? "This one is a scam. Tap Scam and we'll show you why." : 'Read the message, then choose.')}
     </div>
   );
 }
@@ -285,20 +282,17 @@ function VerdictHead({ game: { s } }: { game: Game }) {
 function VerdictControls({ game: { s, actions } }: { game: Game }) {
   const demo = s.cur === 0;
   return (
-    <div style={col(12)}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-        {(['legit', 'scam'] as const).map(id => {
-          const on = s.verdict === id;
-          return (
-            <button key={id} className="ss-choice" onClick={() => actions.pickVerdict(id)} aria-pressed={on} style={{
-              minHeight: 64, borderRadius: 999, border: `2px solid ${on ? C.blue : 'transparent'}`, background: on ? '#ebf2ff' : '#fff',
-              boxShadow: on ? 'none' : SHADOW, outline: demo && id === 'scam' && !on ? '3px solid #FFA722' : 'none', outlineOffset: 3,
-              fontSize: 19, fontWeight: 600, cursor: 'pointer', color: C.ink,
-            }}>{id === 'legit' ? 'Real' : 'Scam'}</button>
-          );
-        })}
-      </div>
-      <PrimaryButton size={19} shadow={false} onClick={actions.decide} disabled={!s.verdict} style={{ opacity: s.verdict ? 1 : 0.4 }}>Lock it in</PrimaryButton>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+      {(['legit', 'scam'] as const).map(id => {
+        const guided = demo && id === 'scam', off = demo && id !== 'scam';
+        return (
+          <button key={id} className="ss-choice" onClick={() => actions.choose(id)} disabled={off} style={{
+            minHeight: 72, borderRadius: 999, border: '2px solid transparent', background: '#fff', boxShadow: SHADOW,
+            outline: guided ? '3px solid #FFA722' : 'none', outlineOffset: 3, opacity: off ? 0.45 : 1,
+            fontSize: 21, fontWeight: 600, cursor: off ? 'default' : 'pointer', color: C.ink,
+          }}>{id === 'legit' ? 'Real' : 'Scam'}</button>
+        );
+      })}
     </div>
   );
 }
