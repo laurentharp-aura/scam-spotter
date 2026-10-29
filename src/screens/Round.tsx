@@ -7,53 +7,14 @@ import { C, Card, FONT, Pill, PrimaryButton, SHADOW, TextButton, col, kicker } f
 
 export function RoundScreen({ game }: { game: Game }) {
   const { s, round } = game;
-  const inIntro = !s.revealed && s.phase === 'intro';
   return (
     <div data-screen-label={`Round L${round.lvl}-${roundNumber(s.cur)}`} style={col(18, { padding: '0 20px 48px' })}>
-      {inIntro ? <RoundIntro game={game} /> : <MessageRoundView game={game} round={round} />}
+      <MessageRoundView game={game} round={round} />
     </div>
   );
 }
 
 const noun = (r: Round) => (r.kind === 'voicemail' ? 'voicemail' : 'message');
-const roundLine = (s: GameState) => `LEVEL ${ROUNDS[s.cur].lvl} · ROUND ${roundNumber(s.cur)} OF ${levelSize(ROUNDS[s.cur].lvl)}`;
-
-// ---------------------------------------------------------------- intro
-
-function RoundIntro({ game: { s, round, actions } }: { game: Game }) {
-  const demo = s.cur === 0, kind = KINDS[round.kind];
-  const title = demo ? "Let's practice one together." : 'Real or scam?';
-  const body = demo ? "First you'll decide if it's real or a scam. Then we'll show you how to point out the red flags."
-    : `Read the ${noun(round)} and make your call. If you think it's a scam, you'll point out what gave it away.`;
-  return (
-    <div data-screen-label="Round intro" style={col(28, { minHeight: 'calc(100vh - 120px)', paddingTop: 4 })}>
-      <div style={{ display: 'flex', gap: 6 }}>
-        {['Decide', 'Flag', 'Learn'].map((l, k) => (
-          <div key={l} style={col(6, { flex: 1 })}>
-            <div style={{ height: 6, borderRadius: 999, background: k === 0 ? 'linear-gradient(90deg,#2A5FFC,#7E2CE2)' : '#dde5ef' }} />
-            <span style={{ fontSize: 14, color: k === 0 ? C.ink : C.faint, fontWeight: 500 }}>{l}</span>
-          </div>
-        ))}
-      </div>
-      <div style={col(24, { flex: 1, justifyContent: 'center', animation: 'ss-rise .3s ease-out both' })}>
-        <div style={col(14, { alignItems: 'center', textAlign: 'center' })}>
-          <div style={{ width: 88, height: 88, borderRadius: '50%', background: '#ebf2ff', color: C.blue, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={kind[1]} size={40} /></div>
-          <span style={{ fontSize: 15, fontWeight: 500, letterSpacing: '0.06em', color: C.muted }}>{demo ? 'PRACTICE ROUND' : roundLine(s)}</span>
-          <span style={{ fontSize: 34, fontWeight: 600, lineHeight: 1.15, textWrap: 'balance' }}>{title}</span>
-          <span style={{ fontSize: 20, lineHeight: 1.45, color: C.body, textWrap: 'pretty', maxWidth: 340 }}>{body}</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, background: '#fff', borderRadius: 20, boxShadow: SHADOW, padding: '16px 18px' }}>
-          <div style={col(2, { flex: 1 })}>
-            <span style={{ fontSize: 13, fontWeight: 500, letterSpacing: '0.06em', color: C.faint }}>UP NEXT · {kind[0].toUpperCase()}</span>
-            <span style={{ fontSize: 18, lineHeight: 1.35 }}>{round.teaser}</span>
-          </div>
-        </div>
-      </div>
-      <PrimaryButton onClick={actions.beginRound}>{demo ? 'Show me' : `Open the ${noun(round)}`}</PrimaryButton>
-    </div>
-  );
-}
-
 // ---------------------------------------------------------------- message rounds
 
 type Piece =
@@ -230,9 +191,11 @@ const subline = (t: string) => <span style={{ fontSize: 17, color: C.muted, line
 function MessageRoundView({ game, round }: { game: Game; round: Round }) {
   const { s } = game;
   const inFlags = !s.revealed && s.phase === 'flags';
+  // After the round: a summary page, without the message.
+  if (s.revealed) return <div style={col(18)}><RevealHead game={game} /><RevealBody game={game} /></div>;
   return (
     <div style={col(18)}>
-      {s.revealed ? <RevealHead game={game} /> : inFlags ? <FlagsHead game={game} round={round} /> : <VerdictHead game={game} />}
+      {inFlags ? <FlagsHead game={game} round={round} /> : <VerdictHead game={game} />}
       {round.context && (
         <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', background: '#ebf2ff', borderRadius: 16, padding: '10px 14px', fontSize: 15, lineHeight: 1.4 }}>
           <span style={{ color: C.blue, display: 'flex', paddingTop: 1 }}><Icon name="Info" size={18} /></span>
@@ -240,18 +203,18 @@ function MessageRoundView({ game, round }: { game: Game; round: Round }) {
         </div>
       )}
       {round.kind === 'text' ? <TextMessage game={game} round={round} /> : round.kind === 'voicemail' ? <VoicemailCard game={game} round={round} /> : <MessageCard game={game} round={round} />}
-      {s.revealed ? <RevealBody game={game} /> : inFlags ? <FlagsControls game={game} round={round} /> : <VerdictControls game={game} />}
+      {inFlags ? <FlagsControls game={game} round={round} /> : <VerdictControls game={game} />}
     </div>
   );
 }
 
 function FlagsHead({ game: { s }, round }: { game: Game; round: Round }) {
-  const demo = s.cur === 0, counted = round.lvl === 1 || s.wrongVerdict;
+  const demo = s.cur === 0;
   const badCount = round.clues.filter(isBad).length;
   const dt = demoTarget(s);
   const [what, why] = demo
-    ? (dt != null ? DEMO_COACH[dt] : [`You found all ${badCount}.`, 'Tap See results to learn what each one means.'])
-    : [counted ? `Tap the ${badCount} red flags.` : 'Tap what gave it away.',
+    ? (dt != null ? DEMO_COACH[dt] : [`You found all ${badCount}.`, "Tap See what to do to wrap up."])
+    : [`Find the ${badCount} red flags.`,
        s.wrongVerdict ? 'Learning them now makes the next one easier.' : `Tap any words in the ${noun(round)} that look off.`];
   return (
     <div style={col(8)}>
@@ -271,27 +234,40 @@ function FlagsHead({ game: { s }, round }: { game: Game; round: Round }) {
   );
 }
 
+/** While flagging: a red-flags card that fills in as the player finds each one. */
 function FlagsControls({ game: { s, actions }, round }: { game: Game; round: Round }) {
-  const demo = s.cur === 0, counted = round.lvl === 1 || s.wrongVerdict;
+  const demo = s.cur === 0;
   const badCount = round.clues.filter(isBad).length;
-  const foundBad = s.marked.filter(c => typeof c === 'number' && isBad(round.clues[c])).length;
+  const found = s.marked.filter((c): c is number => typeof c === 'number' && isBad(round.clues[c]));
+  const allFound = found.length === badCount;
   // Only show the continue button once it can be used.
-  const canContinue = demo ? foundBad === badCount : s.marked.length > 0;
+  const canContinue = demo ? allFound : s.marked.length > 0;
   return (
     <div style={col(14)}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 44, flexWrap: 'wrap' }}>
-        {counted && Array.from({ length: badCount }, (_, i) => {
-          const on = foundBad > i;
-          return <span key={i} style={{ width: 30, height: 30, borderRadius: '50%', border: `1.5px ${on ? 'solid' : 'dashed'} ${C.border}`, background: on ? C.orange : C.line, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 500, fontSize: 14 }}>{on ? i + 1 : ''}</span>;
-        })}
-        <span style={{ fontSize: 17, fontWeight: 600, marginLeft: 4, flex: 1 }}>
-          {counted ? `${foundBad} of ${badCount} found` : `${s.marked.length} marked`}
-        </span>
-        {!demo && <button onClick={actions.useHint} style={{ minHeight: 44, padding: '0 14px', borderRadius: 999, border: '1.5px dashed #a3aebf', background: '#fff', fontSize: 16, fontWeight: 500, color: C.ink, cursor: 'pointer' }}>Hint</button>}
-      </div>
-      {s.quip && <div style={{ background: C.ink, color: '#fff', borderRadius: 18, padding: '14px 16px', fontSize: 18, lineHeight: 1.45, animation: 'ss-rise .25s ease-out' }}>{s.quip}</div>}
-      {canContinue && <PrimaryButton size={19} shadow={false} onClick={actions.reveal} style={{ animation: 'ss-rise .25s ease-out' }}>See results</PrimaryButton>}
-      {!demo && <TextButton onClick={actions.skipFlags}>Skip — show me the answer</TextButton>}
+      {s.quip && <div style={{ background: C.ink, color: '#fff', borderRadius: 18, padding: '14px 16px', fontSize: 17, lineHeight: 1.45, animation: 'ss-rise .25s ease-out' }}>{s.quip}</div>}
+      <Card style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', paddingBottom: 6 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, padding: '12px 16px 4px' }}>
+          <span style={{ fontSize: 13, fontWeight: 500, letterSpacing: '0.06em', color: C.body }}>RED FLAGS · {found.length} OF {badCount} FOUND</span>
+          {!demo && !allFound && <button onClick={actions.useHint} style={{ minHeight: 36, padding: '0 12px', borderRadius: 999, border: '1.5px dashed #a3aebf', background: '#fff', fontSize: 15, fontWeight: 500, color: C.ink, cursor: 'pointer' }}>Hint</button>}
+        </div>
+        {found.map(c => (
+          <div key={c} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '10px 16px', animation: 'ss-rise .3s ease-out both' }}>
+            <span style={{ width: 24, height: 24, marginTop: 1, borderRadius: '50%', background: C.teal, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name="Checkmark" size={14} /></span>
+            <div style={col(1)}>
+              <span style={{ fontSize: 17, fontWeight: 600 }}>{round.clues[c].label}</span>
+              <span style={{ fontSize: 15, color: C.body, lineHeight: 1.4 }}>{round.clues[c].why}</span>
+            </div>
+          </div>
+        ))}
+        {Array.from({ length: badCount - found.length }, (_, k) => (
+          <div key={'left' + k} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '10px 16px' }}>
+            <span style={{ width: 24, height: 24, borderRadius: '50%', border: `1.5px dashed ${C.border}`, background: C.line, flexShrink: 0 }} />
+            <span style={{ fontSize: 16, color: C.faint }}>{k === 0 ? 'Keep looking…' : '—'}</span>
+          </div>
+        ))}
+      </Card>
+      {canContinue && <PrimaryButton size={19} shadow={false} onClick={actions.reveal} style={{ animation: 'ss-rise .25s ease-out' }}>{allFound ? 'See what to do' : "I'm done, see what to do"}</PrimaryButton>}
+      {!demo && !allFound && <TextButton onClick={actions.skipFlags}>Skip — show me the answer</TextButton>}
     </div>
   );
 }
@@ -362,6 +338,10 @@ function RevealBody({ game: { s, round, actions } }: { game: Game }) {
   const progress = lvlLeft ? `${lvlLeft} more to earn ${bName.startsWith('The ') ? '' : 'the '}${bName} badge` : `${bName} badge unlocked`;
   return (
     <div style={col(16)}>
+      <div style={col(10, { background: '#ebf2ff', borderRadius: 24, padding: '20px 20px' })}>
+        <span style={kicker(13, C.blue)}>WHAT TO DO</span>
+        <span style={{ fontSize: 22, fontWeight: 600, lineHeight: 1.3, textWrap: 'pretty' }}>{round.lesson}</span>
+      </div>
       <Card style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <span style={{ padding: '14px 16px 4px', fontSize: 13, fontWeight: 500, letterSpacing: '0.06em', color: C.body }}>{o.rowsTitle}</span>
         {o.rows.map(te => (
@@ -375,10 +355,6 @@ function RevealBody({ game: { s, round, actions } }: { game: Game }) {
         ))}
         <span style={{ height: 6 }} />
       </Card>
-      <div style={col(8, { background: '#ebf2ff', borderRadius: 20, padding: '16px 18px' })}>
-        <span style={kicker(13, C.blue)}>WHAT TO DO</span>
-        <span style={{ fontSize: 18, fontWeight: 600, lineHeight: 1.35 }}>{round.lesson}</span>
-      </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 4 }}>
         <div style={{ display: 'flex', gap: 5 }}>
           {roundsInLevel(round.lvl).map(i => <span key={i} style={{ width: 10, height: 10, borderRadius: '50%', background: isDone(s, i) ? C.teal : '#dde5ef' }} />)}

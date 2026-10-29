@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { BADGES, ROUNDS, isBad } from '../data/content';
 
 export type Screen = 'welcome' | 'name' | 'how' | 'home' | 'map' | 'round' | 'complete' | 'guide' | 'help';
-export type Phase = 'intro' | 'verdict' | 'flags';
+export type Phase = 'verdict' | 'flags';
 export type Verdict = 'scam' | 'legit';
 /** A clue index, or a string key for an ordinary (neutral) phrase. */
 export type Mark = number | string;
@@ -21,7 +21,7 @@ export type GameState = {
 const KEY = 'scamSpotter.progress.v2';
 
 const freshRound = {
-  marked: [], verdict: null, revealed: false, quip: null, hinted: [], phase: 'intro', wrongVerdict: false, wrong: null,
+  marked: [], verdict: null, revealed: false, quip: null, hinted: [], phase: 'verdict', wrongVerdict: false, wrong: null,
 } satisfies Partial<GameState>;
 
 function initialState(): GameState {
@@ -102,7 +102,6 @@ export function useGame() {
       top();
     },
 
-    beginRound: () => { set({ phase: 'verdict' }); top(); },
     /** One tap decides: real messages go straight to the reveal, scams go on to flagging. */
     choose: (v: Verdict) => {
       if (s.cur === 0 && v !== 'scam') return; // the practice round coaches the player to pick Scam
@@ -115,7 +114,8 @@ export function useGame() {
       const clue = typeof c === 'string' ? undefined : round.clues[c];
       if (s.marked.includes(c)) { set(st => ({ marked: st.marked.filter(x => x !== c), quip: null })); return; }
       const demo = s.cur === 0;
-      if (clue && isBad(clue)) { set(st => ({ marked: [...st.marked, c], wrong: null, quip: demo ? null : (clue.quip || clue.why) })); return; }
+      // A correct tap adds the flag to the red-flags card, so no separate message is needed.
+      if (clue && isBad(clue)) { set(st => ({ marked: [...st.marked, c], wrong: null, quip: null })); return; }
       const q = demo ? "That part isn't a red flag. Try the highlighted part."
         : ((clue && (clue.quip || clue.why)) || "That part looks ordinary. It isn't a red flag.");
       window.clearTimeout(wrongTimer.current);
