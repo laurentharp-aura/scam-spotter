@@ -1,6 +1,6 @@
 import { LEVELS } from '../data/content';
 import { Icon } from '../ds/Icon';
-import { badgeView, isDone, nextIdx, playable, roundsInLevel, type Game } from '../game/useGame';
+import { badgeView, isDone, nextIdx, roundsInLevel, type Game } from '../game/useGame';
 import { C, DISPLAY, Medallion, col } from '../ui';
 
 export function Trail({ game: { s, actions } }: { game: Game }) {
@@ -11,7 +11,8 @@ export function Trail({ game: { s, actions } }: { game: Game }) {
       <div className="ss-trail">
         {LEVELS.map(([title, skill], li) => {
           const lvl = li + 1, idxs = roundsInLevel(lvl), b = badgeView(s, li);
-          const doneAll = idxs.every(i => isDone(s, i)), current = !doneAll && idxs.some(i => playable(s, i)), locked = !doneAll && !current;
+          // Every level is open; "current" is the one holding the next unfinished round.
+          const doneAll = idxs.every(i => isDone(s, i)), current = idxs.includes(nIdx), locked = false;
           return (
             <div key={lvl} style={col(16, {
               borderRadius: 28, padding: 22, opacity: locked ? 0.55 : 1,
@@ -28,7 +29,7 @@ export function Trail({ game: { s, actions } }: { game: Game }) {
               </div>
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                 {idxs.map((i, k) => {
-                  const dn = isDone(s, i), pl = playable(s, i), isNext = i === nIdx;
+                  const dn = isDone(s, i), pl = true, isNext = i === nIdx;
                   return (
                     <button key={i} className={pl ? 'ss-lift' : undefined} onClick={() => pl && actions.start(i)} disabled={!pl} aria-label={`Level ${lvl} round ${k + 1}`} style={{
                       width: 52, height: 52, borderRadius: '50%', border: `1.5px ${pl ? 'solid' : 'dashed'} ${dn || isNext ? 'transparent' : C.locked}`,

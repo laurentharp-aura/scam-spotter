@@ -6,7 +6,7 @@ import { StatsBand } from './StatsBand';
 import { AuraMark, C, DISPLAY, Glow, PillWord, PrimaryButton, TextButton, col } from '../ui';
 
 const screen = (gap: number) => col(gap, { paddingBlock: '8px 40px' });
-const WELCOME_POINTS = ['Pretend messages — nothing is real', 'No timer. Take your time.', 'Learn one new trick each round'];
+const WELCOME_POINTS = ['Pretend messages', 'No timer', 'One new trick a round'];
 
 /** A lock-screen notification, like the floating cards on aura.com. */
 function Notice({ app, icon, iconBg, when, title, children, dark }: { app: string; icon?: IconName; iconBg?: string; when: string; title: string; children: ReactNode; dark?: boolean }) {
@@ -29,16 +29,16 @@ function Notice({ app, icon, iconBg, when, title, children, dark }: { app: strin
 
 export function Welcome({ game: { actions } }: { game: Game }) {
   return (
-    <div data-screen-label="00a Welcome" style={{ paddingBlock: '12px 40px' }}>
+    <div data-screen-label="00a Welcome" style={{ paddingBlock: '16px 32px' }}>
       <div className="ss-hero" style={{ position: 'relative', overflow: 'hidden', borderRadius: 32, background: C.hero, border: `1px solid ${C.hair}` }}>
         <Glow />
         <div className="ss-welcome" style={{ position: 'relative' }}>
-          <div style={col(22)}>
-            <span style={{ fontSize: 15, fontWeight: 600, letterSpacing: '0.08em', color: C.link }}>AURA · SCAM SPOTTER</span>
-            <h1 style={{ ...DISPLAY, margin: 0, fontSize: 'clamp(40px, 6vw, 68px)', lineHeight: 1.02, textWrap: 'balance' }}>
+          <div style={col(14)}>
+            <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: '0.08em', color: C.link }}>AURA · SCAM SPOTTER</span>
+            <h1 style={{ ...DISPLAY, margin: 0, fontSize: 'clamp(36px, 4vw, 54px)', lineHeight: 1.02, textWrap: 'balance' }}>
               Spot the <PillWord icon="Shield">scam</PillWord> before it spots you.
             </h1>
-            <span style={{ fontSize: 20, lineHeight: 1.45, color: C.sub, textWrap: 'pretty', maxWidth: 480 }}>Practice on pretend texts, emails, ads, and voicemails. Learn the tells in about a minute a round.</span>
+            <span style={{ fontSize: 19, lineHeight: 1.45, color: C.sub, textWrap: 'pretty', maxWidth: 480 }}>Practice on pretend texts, emails, ads, and voicemails, about a minute a round.</span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 18px' }}>
               {WELCOME_POINTS.map(wp => (
                 <span key={wp} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 16, color: C.sub }}>
@@ -47,7 +47,7 @@ export function Welcome({ game: { actions } }: { game: Game }) {
                 </span>
               ))}
             </div>
-            <PrimaryButton size={21} onClick={() => actions.go('name')} style={{ marginTop: 8, maxWidth: 320, minHeight: 58 }}>Let's start</PrimaryButton>
+            <PrimaryButton size={21} onClick={() => actions.go('name')} style={{ marginTop: 6, maxWidth: 300, minHeight: 54 }}>Let's start</PrimaryButton>
           </div>
           <div className="ss-notices" aria-hidden="true">
             <div style={{ animation: 'ss-rise .5s ease-out .1s both' }}>
@@ -62,7 +62,7 @@ export function Welcome({ game: { actions } }: { game: Game }) {
           </div>
         </div>
       </div>
-      <div style={{ marginTop: 20 }}><StatsBand /></div>
+      <div style={{ marginTop: 16 }}><StatsBand /></div>
     </div>
   );
 }

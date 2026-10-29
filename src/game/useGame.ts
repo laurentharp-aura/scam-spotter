@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { BADGES, ROUNDS, isBad, type Round } from '../data/content';
-import { settings } from './settings';
 
 export type Screen = 'welcome' | 'name' | 'how' | 'home' | 'map' | 'round' | 'complete' | 'guide' | 'help';
 export type Phase = 'intro' | 'verdict' | 'flags';
@@ -40,7 +39,6 @@ function initialState(): GameState {
 // ---- selectors
 export const isDone = (s: GameState, i: number) => !!s.done[ROUNDS[i].id];
 export const nextIdx = (s: GameState) => { const i = ROUNDS.findIndex((_, k) => !isDone(s, k)); return i < 0 ? ROUNDS.length : i; };
-export const playable = (s: GameState, i: number) => settings.unlockAll || i <= nextIdx(s) || isDone(s, i);
 export const levelEarned = (s: GameState, lvl: number) => ROUNDS.every((rd, i) => rd.lvl !== lvl || isDone(s, i));
 export const roundsInLevel = (lvl: number) => ROUNDS.map((r, i) => (r.lvl === lvl ? i : -1)).filter(i => i >= 0);
 export const roundNumber = (i: number) => roundsInLevel(ROUNDS[i].lvl).indexOf(i) + 1;
@@ -51,12 +49,13 @@ export const subName = (s: GameState, t: string) => t.replace('{name}', s.name |
 export const demoTarget = (s: GameState) => (s.cur === 0 ? [0, 1, 2, 3].find(c => !s.marked.includes(c)) : undefined);
 
 export type BadgeView = {
-  name: string; icon: (typeof BADGES)[number][1] | 'Lock'; ring: string; ringStyle: 'solid' | 'dashed';
+  name: string; icon: (typeof BADGES)[number][1]; ring: string; ringStyle: 'solid' | 'dashed';
   fill: string; core: string; iconFg: string; op: number; earned: boolean;
 };
 export function badgeView(s: GameState, li: number): BadgeView {
   const e = levelEarned(s, li + 1), d = BADGES[li];
-  return { name: d[0], icon: e ? d[1] : 'Lock', ring: e ? d[2] : '#cfd7e3', ringStyle: e ? 'solid' : 'dashed', fill: e ? d[3] : '#f4f7fd',
+  // Levels are always open, so an unearned badge shows its own icon greyed out, not a padlock.
+  return { name: d[0], icon: d[1], ring: e ? d[2] : '#cfd7e3', ringStyle: e ? 'solid' : 'dashed', fill: e ? d[3] : '#f4f7fd',
     core: e ? d[2] : '#e6ecf6', iconFg: e ? '#fff' : '#a3aebf', op: 1, earned: e };
 }
 
@@ -103,6 +102,8 @@ export function useGame() {
   const actions = {
     go, start,
     playNext: () => (nextIdx(s) >= ROUNDS.length ? go('map') : start(nextIdx(s))),
+    /** Jump to a level: its first unfinished round, or round 1 if it's all done. */
+    playLevel: (lvl: number) => { const idxs = roundsInLevel(lvl); start(idxs.find(i => !isDone(s, i)) ?? idxs[0]); },
     setNameDraft: (v: string) => set({ nameDraft: v }),
     saveName: () => { set({ name: s.nameDraft.trim() }); go('how'); },
     finishOnboarding: () => { set({ onboarded: true }); start(0); },

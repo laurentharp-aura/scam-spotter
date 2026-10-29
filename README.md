@@ -26,7 +26,6 @@ To use a new icon, add its name to `ICONS` in `scripts/extract-ds.mjs` and re-ru
 
 The prototype's Tweaks panel is available as URL params:
 
-- `?unlockAll=1` opens every round on the trail.
 - `?textScale=1.15` or `?textScale=1.3` enlarges the whole app.
 - `?outlineTappables=1` dash-outlines every tappable phrase.
 

@@ -36,7 +36,10 @@ input::placeholder { color: #a3aebf; }
 .ss-fill { min-height: calc(100vh - 72px); }
 .ss-desktop { display: none !important; }
 
-.ss-home { display: grid; gap: 24px; }
+.ss-home { display: grid; gap: 16px; }
+.ss-levels { display: grid; grid-template-columns: 1fr; gap: 10px; }
+@media (min-width: 520px) { .ss-levels { grid-template-columns: 1fr 1fr; } }
+.ss-link:hover { text-decoration: underline; }
 .ss-welcome { display: grid; gap: 36px; padding: 32px 22px 36px; }
 .ss-notices { display: flex; flex-direction: column; gap: 12px; }
 .ss-trail { display: grid; gap: 16px; }
@@ -57,14 +60,13 @@ input::placeholder { color: #a3aebf; }
   .ss-desktop { display: flex !important; }
   .ss-narrow-wide { max-width: 960px; }
 
-  .ss-home { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: start; gap: 32px; }
+  /* Home fits one screen: greeting, then next round + level picker side by side, then the stats band. */
+  .ss-home { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); align-items: stretch; gap: 20px; }
   .ss-home > :first-child { grid-column: 1 / -1; }
-  /* Fill the screen height: the hero card and badges stretch. */
-  .ss-home { grid-template-rows: auto minmax(calc(100vh - 340px), 1fr) auto; align-items: stretch; }
-  .ss-home-hero { flex: 1; }
+  .ss-levels { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
-  .ss-welcome { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; column-gap: 56px; padding: 72px 64px 88px; }
-  .ss-notices { gap: 16px; padding-top: 24px; }
+  .ss-welcome { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; column-gap: 56px; padding: 32px 56px 32px; }
+  .ss-notices { gap: 12px; }
 
   .ss-trail { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
   .ss-badge-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
