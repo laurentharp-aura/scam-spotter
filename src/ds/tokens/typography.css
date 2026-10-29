@@ -1,0 +1,100 @@
+/* ============================================================
+   Aura Blueprint — Typography
+   Source of truth: the coded design system
+   (@isubscribed/ui-kit themes/3.2.2 fontStyles) — verified
+   against the production token export.
+
+   The shipping product is set ENTIRELY in Basel Grotesk:
+   Display / Title / Label = Basel Grotesk Medium (500)
+   Body                    = Basel Grotesk Regular (400)
+   There is no serif display face in production.
+   (Basel Grotesk is commercial → Hanken Grotesk substitute
+    until the licensed files are added to assets/fonts/.)
+   ============================================================ */
+
+:root {
+  /* Families — one family, one voice */
+  --font-sans: "Basel Grotesk", "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-display: var(--font-sans);   /* display == sans (Basel Medium) */
+  --font-mono: "Overpass Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Weights — Basel Grotesk (Thin / Regular / Medium / Bold) */
+  --weight-thin: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* ---- Display (Basel Medium 500) — size / line ---- */
+  --display-l-size: 64px;  --display-l-line: 72px;   /* DisplayM */
+  --display-m-size: 48px;  --display-m-line: 56px;   /* DisplayS */
+  --display-s-size: 32px;  --display-s-line: 40px;   /* DisplayXS */
+  --display-xs-size: 24px; --display-xs-line: 32px;  /* DisplayXXS */
+
+  /* ---- Title (Basel Medium) ---- */
+  --title-xxl-size: 40px;  --title-xxl-line: 50px;
+  --title-xl-size:  32px;  --title-xl-line:  40px;
+  --title-l-size:   26px;  --title-l-line:   34px;
+  --title-m-size:   22px;  --title-m-line:   28px;
+  --title-s-size:   18px;  --title-s-line:   24px;
+
+  /* ---- Body (Basel Regular) ---- */
+  --body-xl-size: 22px;    --body-xl-line: 28px;
+  --body-l-size:  18px;    --body-l-line:  24px;
+  --body-m-size:  16px;    --body-m-line:  22px;
+  --body-s-size:  14px;    --body-s-line:  18px;
+  --body-xs-size: 12px;    --body-xs-line: 14px;
+
+  /* ---- Label (Basel Medium) ---- */
+  --label-m-size:   16px;  --label-m-line:   22px;
+  --label-s-size:   14px;  --label-s-line:   18px;
+  --label-xs-size:  12px;  --label-xs-line:  14px;
+  --label-xxs-size: 10px;  --label-xxs-line: 12px;
+
+  /* ---- Mono ---- */
+  --mono-size: 13px;       --mono-line: 20px;
+
+  /* Letter spacing */
+  --tracking-tight: -0.02em;
+  --tracking-snug:  -0.01em;
+  --tracking-normal: 0;
+}
+
+/* ============================================================
+   Canonical Blueprint type classes
+   ============================================================ */
+.bp-display-l { font-family: var(--font-display); font-weight: var(--weight-medium); font-size: var(--display-l-size); line-height: var(--display-l-line); letter-spacing: var(--tracking-tight); color: var(--text-primary); }
+.bp-display-m { font-family: var(--font-display); font-weight: var(--weight-medium); font-size: var(--display-m-size); line-height: var(--display-m-line); letter-spacing: var(--tracking-tight); color: var(--text-primary); }
+.bp-display-s { font-family: var(--font-display); font-weight: var(--weight-medium); font-size: var(--display-s-size); line-height: var(--display-s-line); letter-spacing: var(--tracking-snug); color: var(--text-primary); }
+
+.bp-title-xxl { font-family: var(--font-sans); font-weight: var(--weight-medium); font-size: var(--title-xxl-size); line-height: var(--title-xxl-line); letter-spacing: var(--tracking-snug); color: var(--text-primary); }
+.bp-title-xl  { font-family: var(--font-sans); font-weight: var(--weight-medium); font-size: var(--title-xl-size);  line-height: var(--title-xl-line);  letter-spacing: var(--tracking-snug); color: var(--text-primary); }
+.bp-title-l   { font-family: var(--font-sans); font-weight: var(--weight-medium); font-size: var(--title-l-size);   line-height: var(--title-l-line);   color: var(--text-primary); }
+.bp-title-m   { font-family: var(--font-sans); font-weight: var(--weight-medium); font-size: var(--title-m-size);   line-height: var(--title-m-line);   color: var(--text-primary); }
+.bp-title-s   { font-family: var(--font-sans); font-weight: var(--weight-medium); font-size: var(--title-s-size);   line-height: var(--title-s-line);   color: var(--text-primary); }
+
+.bp-body-xl { font-family: var(--font-sans); font-weight: var(--weight-regular); font-size: var(--body-xl-size); line-height: var(--body-xl-line); color: var(--text-primary); }
+.bp-body-l  { font-family: var(--font-sans); font-weight: var(--weight-regular); font-size: var(--body-l-size);  line-height: var(--body-l-line);  color: var(--text-primary); }
+.bp-body-m  { font-family: var(--font-sans); font-weight: var(--weight-regular); font-size: var(--body-m-size);  line-height: var(--body-m-line);  color: var(--text-primary); }
+.bp-body-s  { font-family: var(--font-sans); font-weight: var(--weight-regular); font-size: var(--body-s-size);  line-height: var(--body-s-line);  color: var(--text-secondary); }
+.bp-body-xs { font-family: var(--font-sans); font-weight: var(--weight-regular); font-size: var(--body-xs-size); line-height: var(--body-xs-line); color: var(--text-secondary); }
+
+.bp-label-m   { font-family: var(--font-sans); font-weight: var(--weight-medium); font-size: var(--label-m-size);   line-height: var(--label-m-line); color: var(--text-primary); }
+.bp-label-s   { font-family: var(--font-sans); font-weight: var(--weight-medium); font-size: var(--label-s-size);   line-height: var(--label-s-line); color: var(--text-primary); }
+.bp-label-xs  { font-family: var(--font-sans); font-weight: var(--weight-medium); font-size: var(--label-xs-size);  line-height: var(--label-xs-line); color: var(--text-secondary); }
+.bp-label-xxs { font-family: var(--font-sans); font-weight: var(--weight-medium); font-size: var(--label-xxs-size); line-height: var(--label-xxs-line); color: var(--text-secondary); letter-spacing: 0.02em; }
+
+.bp-mono { font-family: var(--font-mono); font-weight: var(--weight-regular); font-size: var(--mono-size); line-height: var(--mono-line); }
+
+/* ============================================================
+   Legacy aliases — keep earlier components/cards rendering.
+   Mapped onto the canonical scale above.
+   ============================================================ */
+.bp-display-xl { font-family: var(--font-display); font-weight: var(--weight-medium); font-size: var(--display-l-size); line-height: var(--display-l-line); letter-spacing: var(--tracking-tight); color: var(--text-primary); }
+.bp-heading-xl { font-family: var(--font-sans); font-weight: var(--weight-medium); font-size: var(--title-xxl-size); line-height: var(--title-xxl-line); letter-spacing: var(--tracking-snug); color: var(--text-primary); }
+.bp-heading-l  { font-family: var(--font-sans); font-weight: var(--weight-medium); font-size: var(--title-xl-size);  line-height: var(--title-xl-line);  letter-spacing: var(--tracking-snug); color: var(--text-primary); }
+.bp-heading-m  { font-family: var(--font-sans); font-weight: var(--weight-medium); font-size: var(--title-l-size);   line-height: var(--title-l-line);   color: var(--text-primary); }
+.bp-heading-s  { font-family: var(--font-sans); font-weight: var(--weight-medium); font-size: var(--title-m-size);   line-height: var(--title-m-line);   color: var(--text-primary); }
+.bp-title      { font-family: var(--font-sans); font-weight: var(--weight-medium); font-size: var(--title-s-size);   line-height: var(--title-s-line);   color: var(--text-primary); }
+.bp-caption    { font-family: var(--font-sans); font-weight: var(--weight-medium); font-size: var(--label-xs-size);  line-height: var(--label-xs-line); color: var(--text-secondary); letter-spacing: 0.02em; }
+.bp-label      { font-family: var(--font-sans); font-weight: var(--weight-medium); font-size: var(--label-m-size);   line-height: var(--label-m-line); color: var(--text-primary); }

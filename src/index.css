@@ -1,0 +1,18 @@
+@import './ds/tokens/fonts.css';
+@import './ds/tokens/colors.css';
+@import './ds/tokens/typography.css';
+@import './ds/tokens/effects.css';
+
+html, body { margin: 0; padding: 0; background: #dde5ef; -webkit-font-smoothing: antialiased; }
+* { box-sizing: border-box; }
+button, input { font-family: inherit; }
+body { font-family: 'Inter', system-ui, sans-serif; }
+a { color: #2A5FFC; text-decoration: underline; }
+a:hover { color: #192f70; }
+
+.ss-press:active { transform: scale(0.98); }
+.ss-reply:hover { border-color: #6699ff !important; }
+
+@keyframes ss-pop { 0% { transform: scale(0.6); opacity: 0 } 70% { transform: scale(1.08) } 100% { transform: scale(1); opacity: 1 } }
+@keyframes ss-rise { 0% { transform: translateY(8px); opacity: 0 } 100% { transform: translateY(0); opacity: 1 } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important } }

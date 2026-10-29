@@ -1,0 +1,37 @@
+/* ============================================================
+   Aura Blueprint — Webfonts
+   The entire product is set in **Basel Grotesk** (commercial,
+   family key `basel-grotesk`, display name "Basel Grotesk").
+   Substituted with the closest free grotesk, Hanken Grotesk,
+   until the licensed files are dropped in assets/fonts/.
+   Mono = Overpass Mono (exact). Icon font = aura-icons-neu.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&family=Overpass+Mono:wght@300;400;700&display=swap');
+
+/* Basel Grotesk is commercial and NOT bundled here.
+   Drop the licensed web files in assets/fonts/ and uncomment
+   below for true fidelity (weights: Thin 300 / Regular 400 /
+   Medium 500 / Bold 700).
+
+@font-face {
+  font-family: "Basel Grotesk";
+  src: url("../assets/fonts/BaselGrotesk-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Basel Grotesk";
+  src: url("../assets/fonts/BaselGrotesk-Medium.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Basel Grotesk";
+  src: url("../assets/fonts/BaselGrotesk-Thin.woff2") format("woff2");
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Basel Grotesk";
+  src: url("../assets/fonts/BaselGrotesk-Bold.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+*/

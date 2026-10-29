@@ -1,0 +1,212 @@
+/* ============================================================
+   Aura Blueprint — Color tokens
+   Primitive ramps are the EXACT values from the coded design
+   system (@isubscribed/ui-kit themes/3.2.2/primitives/colors).
+   Semantic aliases layer on top — reach for the aliases in UI.
+   ============================================================ */
+
+:root {
+  /* ---- Blue (primary brand) — exact ramp -------------------- */
+  --blue-50:  #fafcff;   /* blue100 */
+  --blue-100: #ebf2ff;   /* blue200 — surface-secondary */
+  --blue-200: #cfe0ff;   /* interp */
+  --blue-300: #b5cdff;   /* blue300 — link disabled */
+  --blue-400: #6699ff;   /* blue400 */
+  --blue-500: #2a5ffc;   /* blue500 — PRIMARY, links, CTAs */
+  --blue-600: #254fcc;   /* blue600 */
+  --blue-700: #192f70;   /* blue700 — pressed */
+  --blue-800: #141e37;   /* blue800 — inverse background */
+  --blue-900: #050a1a;   /* blue900 */
+
+  /* iOS system blue (native status surfaces) */
+  --blue-ios: #007aff;
+
+  /* ---- Neutral (white → Aura navy) — exact ramp ------------- */
+  --neutral-0:   #ffffff;  /* neutral100 */
+  --neutral-50:  #f7f9fc;  /* app tint */
+  --neutral-100: #edf1f7;  /* neutral200 — subtle surface */
+  --neutral-200: #dde5ef;  /* interp — subtle borders */
+  --neutral-300: #cfd7e3;  /* neutral300 — default border */
+  --neutral-400: #a3aebf;  /* neutral400 — tertiary / strong border */
+  --neutral-500: #6c7c93;  /* neutral500 — secondary text */
+  --neutral-600: #4c5a70;  /* neutral600 */
+  --neutral-700: #39465e;  /* neutral700 */
+  --neutral-800: #263147;  /* neutral800 */
+  --neutral-900: #0c131c;  /* neutral900 — headings, near-black navy */
+  --neutral-950: #060a10;
+
+  /* ---- Green (success — lime ramp) — exact ------------------ */
+  --green-100: #f0ffe5;
+  --green-200: #e2ffcc;
+  --green-300: #d3ffaf;
+  --green-400: #aff07a;
+  --green-500: #87d943;
+  --green-600: #77c733;
+  --green-700: #52a110;
+  --green-800: #417d0f;
+  --green-900: #214a00;
+
+  /* ---- Teal (protected / secure accent) — exact ------------- */
+  --teal-100: #ebfaf6;
+  --teal-200: #d5f7ed;
+  --teal-300: #bbf2e2;
+  --teal-400: #97f0d7;
+  --teal-500: #25daa7;
+  --teal-600: #2dc298;
+  --teal-700: #269979;
+  --teal-800: #22705a;
+  --teal-900: #004230;
+
+  /* ---- Red (error / alert) — exact -------------------------- */
+  --red-100: #fff2f2;
+  --red-200: #ffe8e8;
+  --red-300: #ffc4c4;
+  --red-400: #f57878;
+  --red-500: #f33f3f;
+  --red-600: #cf1919;
+  --red-700: #b20e0e;
+  --red-800: #8e0a0a;
+  --red-900: #470404;
+
+  /* ---- Tangerine (warning) — exact; aliased as --amber-* ---- */
+  --tangerine-100: #fff5e5;
+  --tangerine-200: #ffe9c9;
+  --tangerine-300: #ffd89e;
+  --tangerine-400: #ffc978;
+  --tangerine-500: #ffa722;
+  --tangerine-600: #cf8415;
+  --tangerine-700: #96600f;
+  --tangerine-800: #704709;
+  --tangerine-900: #402906;
+  /* legacy amber alias names → tangerine values */
+  --amber-100: var(--tangerine-100);
+  --amber-300: var(--tangerine-300);
+  --amber-500: var(--tangerine-500);
+  --amber-700: var(--tangerine-700);
+
+  /* ---- Purple (Identity Guard accent) — exact --------------- */
+  --purple-100: #f9f5ff;
+  --purple-200: #efe3fc;
+  --purple-300: #d2baf1;
+  --purple-400: #b78ced;
+  --purple-500: #a14dfd;
+  --purple-600: #7e2ce2;
+  --purple-700: #52169c;
+  --purple-800: #350e65;
+  --purple-900: #260640;
+
+  /* ---- Plum (muted brand neutral-violet) — exact ----------- */
+  --plum-100: #f6f5ff;
+  --plum-200: #e1dff7;
+  --plum-300: #c5c0eb;
+  --plum-400: #aea9db;
+  --plum-500: #8982c2;
+  --plum-600: #736da3;
+  --plum-700: #625d8a;
+  --plum-800: #3e3b57;
+  --plum-900: #1d1c29;
+
+  /* ---- Extended accents (exact) — charts, illustration ------ */
+  --calypso-500: #32a8b8;   --calypso-300: #a9e9f2;   --calypso-700: #186873;
+  --magenta-500: #fa3966;   --magenta-300: #fcb8c8;   --magenta-700: #a71032;
+  --nightshade-500: #6a63cc; --nightshade-300: #b3aef7; --nightshade-700: #312d73;
+  --orange-500: #ff8c5a;    --orange-300: #ffc9b2;    --orange-700: #a84e27;
+  --yellow-500: #f0dd30;    --yellow-300: #faf19b;    --yellow-700: #c4b314;
+
+  /* ---- Alpha tokens (exact) — scrims, overlays, tints ------- */
+  --alpha-navy-80:  rgba(12, 19, 28, 0.8);   /* neutral900A80 — scrim */
+  --alpha-navy-60:  rgba(12, 19, 28, 0.6);
+  --alpha-navy-40:  rgba(12, 19, 28, 0.4);
+  --alpha-navy-20:  rgba(12, 19, 28, 0.2);
+  --alpha-white-90: rgba(255, 255, 255, 0.9);
+  --alpha-white-70: rgba(255, 255, 255, 0.7);
+  --alpha-white-10: rgba(255, 255, 255, 0.1);
+  --alpha-blue-8:   rgba(37, 79, 204, 0.08);  /* blue600A8 — hover tint */
+  --alpha-blue-15:  rgba(37, 79, 204, 0.15);
+
+  /* ============================================================
+     SEMANTIC ALIASES (reach for these in UI)
+     ============================================================ */
+
+  /* Text & icon */
+  --text-primary:        var(--neutral-900);
+  --text-secondary:      var(--neutral-500);
+  --text-tertiary:       var(--neutral-400);
+  --text-disabled:       var(--neutral-300);
+  --text-inverse:        var(--neutral-0);
+  --text-link:           var(--blue-500);
+  --text-link-pressed:   var(--blue-700);
+  --text-link-disabled:  var(--blue-300);
+  --text-success:        var(--green-700);
+  --text-warning:        var(--tangerine-700);
+  --text-error:          var(--red-700);
+
+  /* Surfaces */
+  --surface-page:        var(--neutral-0);
+  --surface-app:         var(--neutral-50);
+  --surface-card:        var(--neutral-0);
+  --surface-raised:      var(--neutral-0);
+  --surface-secondary:   var(--blue-100);
+  --surface-inverse:     var(--blue-800);
+  --surface-success:     var(--green-100);
+  --surface-warning:     var(--tangerine-100);
+  --surface-error:       var(--red-100);
+  --surface-hover:       var(--neutral-50);
+
+  /* Fills (controls) */
+  --fill-primary:        var(--blue-500);
+  --fill-primary-pressed:var(--blue-700);
+  --fill-neutral:        var(--neutral-400);
+  --fill-neutral-pressed:var(--neutral-600);
+  --fill-disabled:       var(--neutral-200);
+  --fill-success:        var(--green-600);
+  --fill-warning:        var(--tangerine-500);
+  --fill-error:          var(--red-500);
+
+  /* Borders & strokes */
+  --border-subtle:       var(--neutral-200);
+  --border-default:      var(--neutral-300);
+  --border-strong:       var(--neutral-400);
+  --border-focus:        var(--blue-500);
+  --border-inverse:      rgba(255,255,255,0.12);
+
+  /* Icon defaults */
+  --icon-primary:        var(--neutral-900);
+  --icon-secondary:      var(--neutral-500);
+  --icon-inverse:        var(--neutral-0);
+  --icon-brand:          var(--blue-500);
+}
+
+/* ---- Dark theme -------------------------------------------------- */
+:root[data-theme="dark"], .theme-dark {
+  --text-primary:      var(--neutral-0);
+  --text-secondary:    var(--neutral-400);
+  --text-tertiary:     var(--neutral-500);
+  --text-inverse:      var(--neutral-900);
+
+  --surface-page:      var(--blue-900);
+  --surface-app:       var(--neutral-900);
+  --surface-card:      #121a26;
+  --surface-raised:    #16202f;
+  --surface-secondary: var(--blue-800);
+  --surface-inverse:   var(--neutral-0);
+  --surface-hover:     rgba(255,255,255,0.04);
+
+  --border-subtle:     rgba(255,255,255,0.08);
+  --border-default:    rgba(255,255,255,0.14);
+  --border-strong:     rgba(255,255,255,0.24);
+  --border-focus:      var(--blue-400);
+
+  --icon-primary:      var(--neutral-0);
+  --icon-secondary:    var(--neutral-400);
+}
+
+/* ---- Identity Guard sub-brand mode ------------------------------- */
+:root[data-brand="identity-guard"], .brand-idg {
+  --fill-primary:      var(--purple-600);
+  --fill-primary-pressed: var(--purple-700);
+  --surface-inverse:   var(--purple-800);
+  --text-link:         var(--purple-600);
+  --icon-brand:        var(--purple-600);
+  --border-focus:      var(--purple-600);
+}

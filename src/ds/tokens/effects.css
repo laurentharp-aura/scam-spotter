@@ -1,0 +1,32 @@
+/* ============================================================
+   Aura Blueprint — Elevation, shadow & motion tokens
+   Soft, low-contrast shadows on a tinted-blue app background.
+   ============================================================ */
+
+:root {
+  /* Shadows */
+  --shadow-xs:  0 1px 2px rgba(12,19,28,0.06);
+  --shadow-s:   0 2px 8px rgba(12,19,28,0.06);
+  --shadow-m:   0 6px 20px rgba(12,19,28,0.08);
+  --shadow-l:   0 12px 32px rgba(12,19,28,0.10);
+  --shadow-xl:  0 24px 60px rgba(12,19,28,0.14);
+  --shadow-focus: 0 0 0 3px rgba(51,102,255,0.32);
+
+  /* Hairline border helper */
+  --hairline: 1px solid var(--border-subtle);
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);    /* @kind other */
+  --ease-emphasized: cubic-bezier(0.3, 0, 0, 1);  /* @kind other */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* @kind other */
+  --duration-fast: 120ms;  /* @kind other */
+  --duration-base: 200ms;  /* @kind other */
+  --duration-slow: 320ms;  /* @kind other */
+}
+
+@keyframes bp-spin { to { transform: rotate(360deg); } }
+@keyframes bp-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+@keyframes bp-shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+@keyframes bp-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes bp-pop { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
+@keyframes bp-slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
