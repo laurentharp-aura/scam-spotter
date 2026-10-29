@@ -2,7 +2,7 @@ import { Icon } from './ds/Icon';
 import { settings } from './game/settings';
 import { useGame, type Game, type Screen } from './game/useGame';
 import { C, FONT } from './ui';
-import { HowToPlay, NameScreen, Welcome, WhyItMatters } from './screens/Onboarding';
+import { HowToPlay, NameScreen, Welcome } from './screens/Onboarding';
 import { Home } from './screens/Home';
 import { Trail } from './screens/Trail';
 import { RoundScreen } from './screens/Round';
@@ -22,7 +22,6 @@ export default function App() {
       <div style={{ zoom: settings.textScale }}>
         <TopBar game={game} />
         {s.screen === 'welcome' && <Welcome game={game} />}
-        {s.screen === 'why' && <WhyItMatters game={game} />}
         {s.screen === 'name' && <NameScreen game={game} />}
         {s.screen === 'how' && <HowToPlay game={game} />}
         {s.screen === 'home' && <Home game={game} />}
@@ -38,7 +37,7 @@ export default function App() {
 
 function TopBar({ game: { s, actions } }: { game: Game }) {
   const fg = C.ink, bd = C.border;
-  const backTo: Partial<Record<Screen, Screen>> = { help: s.prev || 'home', why: 'welcome', name: 'why', how: 'name' };
+  const backTo: Partial<Record<Screen, Screen>> = { help: s.prev || 'home', name: 'welcome', how: 'name' };
   const pill = { height: 48, borderRadius: 999, border: `1.5px solid ${bd}`, background: 'transparent', fontWeight: 600, color: fg, cursor: 'pointer' } as const;
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, padding: '12px 16px', position: 'sticky', top: 'env(safe-area-inset-top, 0px)', zIndex: 5, background: C.page, minHeight: 72 }}>

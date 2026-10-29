@@ -1,6 +1,5 @@
 import { CallProtection } from '../ds/illustrations';
 import { Icon } from '../ds/Icon';
-import { STATS, STATS_SOURCE } from '../data/stats';
 import type { Game } from '../game/useGame';
 import { C, PrimaryButton, SHADOW, TextButton, col } from '../ui';
 
@@ -27,32 +26,7 @@ export function Welcome({ game: { actions } }: { game: Game }) {
           </div>
         ))}
       </div>
-      <PrimaryButton size={22} onClick={() => actions.go('why')} style={{ marginTop: 'auto' }}>Let's start</PrimaryButton>
-    </div>
-  );
-}
-
-/** Onboarding step 2: why this matters, before the player starts. FBI figures from src/data/stats.ts. */
-export function WhyItMatters({ game: { actions } }: { game: Game }) {
-  return (
-    <div data-screen-label="00b Why it matters" style={screen(18)}>
-      <div style={col(6)}>
-        <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: '0.08em', color: C.blue }}>DID YOU KNOW?</span>
-        <span style={{ fontSize: 32, fontWeight: 600, lineHeight: 1.15, textWrap: 'balance' }}>Scams are a multi-billion-dollar business.</span>
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-        {STATS.map(st => (
-          <div key={st.value} style={col(6, { background: '#fff', borderRadius: 20, boxShadow: SHADOW, padding: '16px 16px 18px' })}>
-            <span style={{ fontSize: 30, fontWeight: 600, lineHeight: 1, color: C.blue, fontVariantNumeric: 'tabular-nums' }}>{st.value}</span>
-            <span style={{ fontSize: 15, lineHeight: 1.35, color: C.body }}>{st.label}</span>
-          </div>
-        ))}
-      </div>
-      <span style={{ fontSize: 18, lineHeight: 1.45, color: '#263147' }}>The good news: most scams use the same few tricks. Learn to spot them here, with pretend messages.</span>
-      <span style={{ fontSize: 13, color: C.faint, lineHeight: 1.5 }}>
-        Source: <a href={STATS_SOURCE.url} target="_blank" rel="noreferrer">{STATS_SOURCE.label}</a>
-      </span>
-      <PrimaryButton size={22} onClick={() => actions.go('name')} style={{ marginTop: 'auto' }}>Get started</PrimaryButton>
+      <PrimaryButton size={22} onClick={() => actions.go('name')} style={{ marginTop: 'auto' }}>Let's start</PrimaryButton>
     </div>
   );
 }

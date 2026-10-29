@@ -16,7 +16,7 @@ npm run build     # typecheck + production build to dist/
 |---|---|
 | `src/data/content.ts` | 18 rounds across 6 themed levels (scam texts, fraud texts, emails, messages, ads, voicemails), 3 per level with real and fake mixed, plus the level and badge definitions. Each round has a stable `id`, which is what saved progress refers to. |
 | `src/game/useGame.ts` | Game state, persistence (`localStorage`, key `scamSpotter.progress.v2`), the Decide → Flag → Learn flow, hints, scoring |
-| `src/screens/` | Onboarding (welcome, "Did you know?" FBI stats, name, how to play) · Home · Trail · Round (intro, message or voicemail, red flags, results) · Level complete · Badges · Help |
+| `src/screens/` | Onboarding (welcome, name, how to play) · Home (level picker, badges) · Trail · Round (intro, message or voicemail, red flags, results) · Level complete · Badges · Help |
 | `src/ui.tsx` | Shared colours, shadows and buttons, plus the badge medallion |
 | `src/ds/` | Pieces pulled from the Aura Blueprint DS bundle: the icon subset, the `CallProtection` illustration and the token CSS. Regenerate them with `node scripts/extract-ds.mjs`, run from a checkout that has the Claude Design bundle in `../project/`. Don't edit the generated files. |
 

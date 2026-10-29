@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { BADGES, ROUNDS, isBad } from '../data/content';
 import { settings } from './settings';
 
-export type Screen = 'welcome' | 'why' | 'name' | 'how' | 'home' | 'map' | 'round' | 'complete' | 'guide' | 'help';
+export type Screen = 'welcome' | 'name' | 'how' | 'home' | 'map' | 'round' | 'complete' | 'guide' | 'help';
 export type Phase = 'verdict' | 'flags';
 export type Verdict = 'scam' | 'legit';
 /** A clue index, or a string key for an ordinary (neutral) phrase. */
