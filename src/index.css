@@ -3,18 +3,31 @@
 @import './ds/tokens/typography.css';
 @import './ds/tokens/effects.css';
 
-html, body { margin: 0; padding: 0; background: #EEF3FC; -webkit-font-smoothing: antialiased; }
+:root { color-scheme: dark; }
+html, body { margin: 0; padding: 0; background: #121212; color: #fff; -webkit-font-smoothing: antialiased; }
 * { box-sizing: border-box; }
 button, input { font-family: inherit; }
 body { font-family: 'Inter', system-ui, sans-serif; }
-a { color: #2A5FFC; text-decoration: underline; }
-a:hover { color: #192f70; }
+a { color: #8fb0ff; text-decoration: underline; }
 :focus-visible { outline: 3px solid #6699ff; outline-offset: 2px; }
+input::placeholder { color: #8a8a94; }
 
 .ss-press:active { transform: scale(0.98); }
-.ss-btn:not(:disabled):hover { filter: brightness(1.08); }
-.ss-choice:hover { border-color: #b5cdff !important; }
+.ss-btn:not(:disabled):hover { filter: brightness(1.12); }
+.ss-choice:hover { transform: translateY(-1px); box-shadow: 0 0 0 3px rgba(143,176,255,0.45) !important; }
 .ss-tap:hover { box-shadow: 0 0 0 2px #b5cdff; }
+.ss-outline:hover { background: rgba(255,255,255,0.08) !important; }
+.ss-lift { transition: transform .2s var(--ease-standard), border-color .2s; }
+.ss-lift:hover { transform: translateY(-2px); }
+
+/* ---------------------------------------------------------------- Solstice glow
+   A blurred rainbow arc (blue → cyan → yellow → orange) like Aura's Solstice key art. */
+.ss-glow { position: absolute; left: -20%; right: -20%; height: 120%; bottom: -55%; pointer-events: none; filter: blur(26px);
+  background: radial-gradient(closest-side, transparent 60%, rgba(255,110,30,0.85) 66%, rgba(255,196,60,0.8) 72%, rgba(70,215,200,0.7) 78%, rgba(40,140,255,0.75) 85%, rgba(42,70,252,0.35) 92%, transparent 100%);
+  animation: ss-breathe 9s ease-in-out infinite; }
+/* Crest near the top, e.g. behind a badge. */
+.ss-glow-top { bottom: -20%; }
+@keyframes ss-breathe { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; } }
 
 /* ---------------------------------------------------------------- layout
    Desktop-first web layout that still stacks to one column on phones (< 900px). */
@@ -24,9 +37,8 @@ a:hover { color: #192f70; }
 .ss-desktop { display: none !important; }
 
 .ss-home { display: grid; gap: 24px; }
-.ss-welcome { display: grid; gap: 22px; padding-block: 8px 40px; }
-.ss-welcome-art { width: 180px; height: 180px; }
-.ss-welcome-art > div { transform: scale(0.6716); transform-origin: 0 0; }
+.ss-welcome { display: grid; gap: 36px; padding: 32px 22px 36px; }
+.ss-notices { display: flex; flex-direction: column; gap: 12px; }
 .ss-trail { display: grid; gap: 16px; }
 .ss-badge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
@@ -41,9 +53,8 @@ a:hover { color: #192f70; }
   .ss-home { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: start; gap: 32px; }
   .ss-home > :first-child { grid-column: 1 / -1; }
 
-  .ss-welcome { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; column-gap: 64px; padding-block: 64px 48px; }
-  .ss-welcome-art { width: 400px; height: 400px; justify-self: center; grid-column: 2; grid-row: 1 / span 6; }
-  .ss-welcome-art > div { transform: scale(1.4925); }
+  .ss-welcome { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; column-gap: 56px; padding: 72px 64px 88px; }
+  .ss-notices { gap: 16px; padding-top: 24px; }
 
   .ss-trail { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
   .ss-badge-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
