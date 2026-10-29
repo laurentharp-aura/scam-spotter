@@ -2,21 +2,21 @@ import type { ReactNode } from 'react';
 import { ROUNDS } from '../data/content';
 import { Icon, type IconName } from '../ds/Icon';
 import type { Game } from '../game/useGame';
-import { C, DISPLAY, Glow, PillWord, PrimaryButton, TextButton, col } from '../ui';
+import { AuraMark, C, DISPLAY, Glow, PillWord, PrimaryButton, TextButton, col } from '../ui';
 
 const screen = (gap: number) => col(gap, { paddingBlock: '8px 40px' });
 const WELCOME_POINTS = ['Pretend messages — nothing is real', 'No timer. Take your time.', 'Learn one new trick each round'];
 
 /** A lock-screen notification, like the floating cards on aura.com. */
-function Notice({ app, icon, iconBg, when, title, children, dark }: { app: string; icon: IconName; iconBg: string; when: string; title: string; children: ReactNode; dark?: boolean }) {
+function Notice({ app, icon, iconBg, when, title, children, dark }: { app: string; icon?: IconName; iconBg?: string; when: string; title: string; children: ReactNode; dark?: boolean }) {
   return (
     <div style={{
       display: 'flex', gap: 12, padding: '14px 16px', borderRadius: 22, maxWidth: 380, width: '100%',
-      background: dark ? 'rgba(40,40,44,0.72)' : 'rgba(255,255,255,0.94)', color: dark ? '#fff' : C.ink,
+      background: dark ? 'rgba(19,33,77,0.78)' : 'rgba(255,255,255,0.94)', color: dark ? '#fff' : C.ink,
       backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : 'transparent'}`,
       boxShadow: '0 18px 40px rgba(0,0,0,0.35)', fontFamily: "-apple-system,'SF Pro Text',system-ui,sans-serif",
     }}>
-      <span style={{ width: 38, height: 38, borderRadius: 10, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name={icon} size={20} /></span>
+      {icon ? <span style={{ width: 38, height: 38, borderRadius: 10, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name={icon} size={20} /></span> : <AuraMark size={38} />}
       <div style={col(2, { flex: 1, minWidth: 0 })}>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, fontSize: 13, opacity: 0.7 }}><span>{app}</span><span>{when}</span></div>
         <span style={{ fontSize: 15, fontWeight: 600 }}>{title}</span>
@@ -29,7 +29,7 @@ function Notice({ app, icon, iconBg, when, title, children, dark }: { app: strin
 export function Welcome({ game: { actions } }: { game: Game }) {
   return (
     <div data-screen-label="00a Welcome" style={{ paddingBlock: '12px 40px' }}>
-      <div className="ss-hero" style={{ position: 'relative', overflow: 'hidden', borderRadius: 32, background: '#0a0a0b', border: `1px solid ${C.hair}` }}>
+      <div className="ss-hero" style={{ position: 'relative', overflow: 'hidden', borderRadius: 32, background: C.hero, border: `1px solid ${C.hair}` }}>
         <Glow />
         <div className="ss-welcome" style={{ position: 'relative' }}>
           <div style={col(22)}>
@@ -53,7 +53,7 @@ export function Welcome({ game: { actions } }: { game: Game }) {
               <Notice app="Messages" icon="Message" iconBg="#34c759" when="now" title="+1 (938) 555‑0142">FedEx: Your package is on hold. Pay $1.99 within 24 hrs: fdx-ship.co/pay</Notice>
             </div>
             <div style={{ animation: 'ss-rise .5s ease-out .5s both', alignSelf: 'flex-end' }}>
-              <Notice dark app="Scam Spotter" icon="Shield" iconBg={C.blue} when="now" title="Nice catch.">Odd number, tiny fee, deadline and a fake link. That's a scam.</Notice>
+              <Notice dark app="Aura · Scam Spotter" when="now" title="Nice catch.">Odd number, tiny fee, deadline and a fake link. That's a scam.</Notice>
             </div>
             <span style={{ alignSelf: 'flex-end', background: '#0a84ff', color: '#fff', borderRadius: '20px 20px 6px 20px', padding: '10px 16px', fontSize: 16, maxWidth: 280, animation: 'ss-rise .5s ease-out .9s both', fontFamily: "-apple-system,'SF Pro Text',system-ui,sans-serif" }}>
               Glad I didn't tap that link 🙏

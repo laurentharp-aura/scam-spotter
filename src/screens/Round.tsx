@@ -247,7 +247,7 @@ function MessageRoundView({ game, round }: { game: Game; round: Round }) {
           <span style={{ width: 28, height: 28, borderRadius: '50%', background: '#fff', color: C.ink, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={KINDS[round.kind][1]} size={15} /></span>
           <span style={{ fontSize: 14, fontWeight: 600 }}>{s.cur === 0 ? 'Practice round' : `Level ${round.lvl} · ${LEVELS[round.lvl - 1][0]}`}</span>
           <span style={{ display: 'flex', gap: 4 }}>
-            {nums.map(i => <span key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: i === s.cur ? '#fff' : isDone(s, i) ? C.teal : '#45454b' }} />)}
+            {nums.map(i => <span key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: i === s.cur ? '#fff' : isDone(s, i) ? C.teal : C.locked }} />)}
           </span>
         </div>
         {head}
@@ -302,7 +302,7 @@ function FlagsControls({ game: { s, actions }, round }: { game: Game; round: Rou
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 44, flexWrap: 'wrap' }}>
         {counted && Array.from({ length: badCount }, (_, i) => {
           const on = foundBad > i;
-          return <span key={i} style={{ width: 30, height: 30, borderRadius: '50%', border: on ? 'none' : '1.5px solid #45454b', background: on ? C.orange : C.surface, color: on ? C.ink : C.text, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 500, fontSize: 14 }}>{on ? i + 1 : ''}</span>;
+          return <span key={i} style={{ width: 30, height: 30, borderRadius: '50%', border: on ? 'none' : `1.5px solid ${C.locked}`, background: on ? C.orange : C.surface, color: on ? C.ink : C.text, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 500, fontSize: 14 }}>{on ? i + 1 : ''}</span>;
         })}
         <span style={{ fontSize: 17, fontWeight: 600, marginLeft: 4, flex: 1 }}>
           {counted ? `${foundBad} of ${badCount} found` : `${s.marked.length} marked`}

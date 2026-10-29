@@ -8,7 +8,7 @@ export function LevelComplete({ game: { s, actions } }: { game: Game }) {
   const line = { fontSize: 18, lineHeight: 1.5, color: C.sub } as const;
   return (
     <div data-screen-label="06 Level complete" className="ss-narrow" style={{ paddingBlock: '24px 48px' }}>
-      <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 32, background: '#0a0a0b', border: `1px solid ${C.hair}` }}>
+      <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 32, background: C.hero, border: `1px solid ${C.hair}` }}>
         <Glow at="top" />
         <div style={col(18, { position: 'relative', alignItems: 'center', textAlign: 'center', padding: '56px 28px 32px' })}>
           <div style={{ animation: 'ss-pop .5s ease-out both', filter: 'drop-shadow(0 12px 40px rgba(0,0,0,0.5))' }}><Medallion b={b} size={168} core={104} icon={60} /></div>

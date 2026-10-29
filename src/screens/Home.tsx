@@ -22,10 +22,10 @@ export function Home({ game: { s, actions } }: { game: Game }) {
       </h1>
 
       <div className="ss-home-main" style={col(16)}>
-        <div className="ss-home-hero" style={{ position: 'relative', overflow: 'hidden', background: '#0a0a0b', border: `1px solid ${C.hair}`, borderRadius: 32, minHeight: 300, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div className="ss-home-hero" style={{ position: 'relative', overflow: 'hidden', background: C.hero, border: `1px solid ${C.hair}`, borderRadius: 32, minHeight: 300, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <Glow />
           <div style={col(16, { position: 'relative', padding: 'clamp(28px, 3.5vw, 56px)' })}>
-            <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: '0.08em', color: C.peach }}>{allDone ? 'ALL ROUNDS COMPLETE' : isNew ? 'GET STARTED' : 'YOUR NEXT ROUND'}</span>
+            <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: '0.08em', color: C.sky }}>{allDone ? 'ALL ROUNDS COMPLETE' : isNew ? 'GET STARTED' : 'YOUR NEXT ROUND'}</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
               {!allDone && <span style={{ width: 56, height: 56, borderRadius: '50%', background: '#fff', color: C.ink, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name={KINDS[nr.kind][1]} size={26} /></span>}
               <div style={col(4)}>

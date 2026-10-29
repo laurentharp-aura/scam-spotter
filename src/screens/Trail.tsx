@@ -15,8 +15,8 @@ export function Trail({ game: { s, actions } }: { game: Game }) {
           return (
             <div key={lvl} style={col(16, {
               borderRadius: 28, padding: 22, opacity: locked ? 0.55 : 1,
-              background: current ? `linear-gradient(${C.surface},${C.surface}) padding-box,linear-gradient(90deg,#6121FF,#2A5FFC) border-box` : doneAll ? '#14241f' : C.surface,
-              border: `1.5px ${locked ? 'dashed' : 'solid'} ${current ? 'transparent' : doneAll ? '#1f4a3d' : C.hair}`,
+              background: current ? `linear-gradient(${C.surface},${C.surface}) padding-box,linear-gradient(90deg,#6121FF,#2A5FFC) border-box` : doneAll ? 'rgba(37,218,167,0.10)' : C.surface,
+              border: `1.5px ${locked ? 'dashed' : 'solid'} ${current ? 'transparent' : doneAll ? 'rgba(37,218,167,0.35)' : C.hair}`,
             })}>
               <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
                 <Medallion b={b} size={52} core={32} icon={18} />
@@ -31,7 +31,7 @@ export function Trail({ game: { s, actions } }: { game: Game }) {
                   const dn = isDone(s, i), pl = playable(s, i), isNext = i === nIdx;
                   return (
                     <button key={i} className={pl ? 'ss-lift' : undefined} onClick={() => pl && actions.start(i)} disabled={!pl} aria-label={`Level ${lvl} round ${k + 1}`} style={{
-                      width: 52, height: 52, borderRadius: '50%', border: `1.5px ${pl ? 'solid' : 'dashed'} ${dn || isNext ? 'transparent' : '#45454b'}`,
+                      width: 52, height: 52, borderRadius: '50%', border: `1.5px ${pl ? 'solid' : 'dashed'} ${dn || isNext ? 'transparent' : C.locked}`,
                       background: dn ? C.teal : isNext ? C.blue : C.surface2, display: 'flex', alignItems: 'center', justifyContent: 'center',
                       cursor: pl ? 'pointer' : 'default', color: dn ? C.ink : C.text, fontSize: 19, fontWeight: 600,
                       boxShadow: isNext ? '0 0 0 6px rgba(42,95,252,0.25)' : 'none',
@@ -45,7 +45,7 @@ export function Trail({ game: { s, actions } }: { game: Game }) {
           );
         })}
       </div>
-      <button className="ss-outline" onClick={actions.resetAll} style={{ alignSelf: 'center', minHeight: 48, padding: '0 24px', border: '1.5px dashed #5a5a62', borderRadius: 999, background: 'none', fontSize: 16, fontWeight: 600, color: C.sub, cursor: 'pointer' }}>Start over as a new player</button>
+      <button className="ss-outline" onClick={actions.resetAll} style={{ alignSelf: 'center', minHeight: 48, padding: '0 24px', border: '1.5px dashed #3a4a80', borderRadius: 999, background: 'none', fontSize: 16, fontWeight: 600, color: C.sub, cursor: 'pointer' }}>Start over as a new player</button>
     </div>
   );
 }

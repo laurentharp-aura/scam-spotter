@@ -1,7 +1,7 @@
 import { Icon } from './ds/Icon';
 import { settings } from './game/settings';
 import { useGame, type Game, type Screen } from './game/useGame';
-import { C, DISPLAY } from './ui';
+import { AuraMark, C, DISPLAY } from './ui';
 import { HowToPlay, NameScreen, Welcome } from './screens/Onboarding';
 import { Home } from './screens/Home';
 import { Trail } from './screens/Trail';
@@ -16,7 +16,7 @@ export default function App() {
 
   return (
     <div style={{
-      minHeight: '100vh', background: C.bg, fontFamily: "'Inter',system-ui,sans-serif",
+      minHeight: '100vh', background: 'transparent', fontFamily: "'Inter',system-ui,sans-serif",
       color: C.text, letterSpacing: '-0.01em',
     }}>
       <div style={{ zoom: settings.textScale }}>
@@ -44,7 +44,7 @@ function TopBar({ game: { s, actions } }: { game: Game }) {
   const onboarding = ['welcome', 'name', 'how'].includes(s.screen);
   const brand = (
     <>
-      <div style={{ width: 40, height: 40, borderRadius: 12, background: C.blue, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name="Shield" size={22} /></div>
+      <AuraMark />
       <span style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1, textAlign: 'left' }}>
         <span style={{ ...DISPLAY, fontSize: 21, color: fg }}>Scam Spotter</span>
         <span style={{ fontSize: 13, color: C.faint }}>by Aura</span>
@@ -53,7 +53,7 @@ function TopBar({ game: { s, actions } }: { game: Game }) {
   );
   const brandBox = { display: 'flex', alignItems: 'center', gap: 10, background: 'none', border: 'none', padding: 0 } as const;
   return (
-    <header style={{ position: 'sticky', top: 'env(safe-area-inset-top, 0px)', zIndex: 5, background: 'rgba(18,18,18,0.85)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderBottom: `1px solid ${C.hair}` }}>
+    <header style={{ position: 'sticky', top: 'env(safe-area-inset-top, 0px)', zIndex: 5, background: 'rgba(11,20,48,0.78)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderBottom: `1px solid ${C.hair}` }}>
       <div className="ss-wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, paddingBlock: 12, minHeight: 72 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           {/* Phones show the brand only on home; desktop always shows it, and it links home once onboarded. */}

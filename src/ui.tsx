@@ -8,14 +8,16 @@ import type { BadgeView } from './game/useGame';
  * - mockup ink (ink … border) for the light phone/email mockups, which stay white like real screens.
  */
 export const C = {
-  bg: '#121212', surface: '#1d1d1f', surface2: '#2a2a2d', text: '#ffffff', sub: '#b9b9c2', faint: '#8a8a94', hair: 'rgba(255,255,255,0.10)',
-  link: '#8fb0ff', peach: '#FCD9A8',
+  bg: '#0b1430', surface: '#13214d', surface2: '#1c2d60', text: '#ffffff', sub: '#bccaee', faint: '#8d9bc6', hair: 'rgba(173,196,255,0.16)',
+  link: '#a9c6ff', sky: '#a9c6ff', locked: '#3a4a80',
+  /** Navy hero cards, like the dark Aura app icon. */
+  hero: 'linear-gradient(150deg,#1d4fa8 0%,#142a6e 50%,#0e1c4f 100%)',
   ink: '#0B132B', muted: '#4c5a70', body: '#39465e', line: '#edf1f7', border: '#cfd7e3',
   blue: '#2A5FFC', navy: '#192f70', orange: '#FFA722', teal: '#25DAA7',
 };
 export const SHADOW = '0 1px 2px rgba(0,0,0,0.3),0 12px 32px rgba(0,0,0,0.35)';
-/** aura.com's periwinkle-to-peach band. */
-export const PASTEL = 'linear-gradient(160deg,#A9BCFF 0%,#D6C8F4 48%,#FCD9A8 100%)';
+/** The light Aura app-icon gradient: periwinkle to white. */
+export const PASTEL = 'linear-gradient(135deg,#a9c6ff 0%,#cfdfff 50%,#f2f6ff 100%)';
 export const DISPLAY: CSSProperties = { fontFamily: "'Inter Tight','Inter',system-ui,sans-serif", letterSpacing: '-0.035em', fontWeight: 600 };
 
 export const col = (gap: number, extra?: CSSProperties): CSSProperties => ({ display: 'flex', flexDirection: 'column', gap, ...extra });
@@ -45,9 +47,21 @@ export function Card({ children, style }: { children: ReactNode; style?: CSSProp
   return <div style={{ background: C.surface, border: `1px solid ${C.hair}`, borderRadius: 24, ...style }}>{children}</div>;
 }
 
-/** The Solstice rainbow arc, as a soft glow behind hero content. The parent needs position: relative + overflow: hidden. */
+/** A soft blue bloom behind hero content. The parent needs position: relative + overflow: hidden. */
 export function Glow({ at = 'bottom', style }: { at?: 'bottom' | 'top'; style?: CSSProperties }) {
   return <div aria-hidden="true" className={`ss-glow ss-glow-${at}`} style={style} />;
+}
+
+/** The Aura mark (Λ with a bar) on the light-blue app-icon tile. */
+export function AuraMark({ size = 40 }: { size?: number }) {
+  return (
+    <span style={{ width: size, height: size, borderRadius: size * 0.28, background: PASTEL, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <svg width={size * 0.56} height={size * 0.56} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="6.5" y="2.5" width="11" height="2.4" fill={C.bg} />
+        <path d="M4.2 21.5 L12 7.6 L19.8 21.5" stroke={C.bg} strokeWidth="2.4" strokeLinejoin="miter" />
+      </svg>
+    </span>
+  );
 }
 
 /** A word set in a white pill inside a headline, like aura.com's "your [identity] staying safe". */

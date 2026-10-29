@@ -56,8 +56,8 @@ export type BadgeView = {
 };
 export function badgeView(s: GameState, li: number): BadgeView {
   const e = levelEarned(s, li + 1), d = BADGES[li];
-  return { name: d[0], icon: e ? d[1] : 'Lock', ring: e ? d[2] : '#45454b', ringStyle: e ? 'solid' : 'dashed', fill: e ? d[3] : '#1d1d1f',
-    core: e ? d[2] : '#2a2a2d', iconFg: e ? '#fff' : '#8a8a94', op: 1, earned: e };
+  return { name: d[0], icon: e ? d[1] : 'Lock', ring: e ? d[2] : '#3a4a80', ringStyle: e ? 'solid' : 'dashed', fill: e ? d[3] : '#13214d',
+    core: e ? d[2] : '#1c2d60', iconFg: e ? '#fff' : '#8d9bc6', op: 1, earned: e };
 }
 
 function score(s: GameState, round: Round) {

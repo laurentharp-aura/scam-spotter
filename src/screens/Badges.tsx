@@ -12,7 +12,7 @@ export function Badges({ game: { s, actions } }: { game: Game }) {
         <span style={{ fontSize: 17, color: C.sub }}>Each level teaches one habit. Finish every round in a level to earn its badge.</span>
       </div>
       {ob && s.openB != null && (
-        <div style={{ position: 'relative', overflow: 'hidden', background: '#0a0a0b', border: `1px solid ${C.hair}`, borderRadius: 32, animation: 'ss-rise .25s ease-out' }}>
+        <div style={{ position: 'relative', overflow: 'hidden', background: C.hero, border: `1px solid ${C.hair}`, borderRadius: 32, animation: 'ss-rise .25s ease-out' }}>
           {ob.earned && <Glow />}
           <div style={col(12, { position: 'relative', padding: '32px 22px', alignItems: 'center', textAlign: 'center' })}>
             <Medallion b={ob} size={120} core={74} icon={44} />
