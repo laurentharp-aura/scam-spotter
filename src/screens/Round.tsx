@@ -1,60 +1,15 @@
-import type { CSSProperties, ReactNode } from 'react';
-import { BADGES, KINDS, LEVELS, ROUNDS, isBad, type Round, type Part, type SectionKind } from '../data/content';
+import type { CSSProperties } from 'react';
+import { BADGES, KINDS, ROUNDS, isBad, type Round, type Part, type SectionKind } from '../data/content';
 import { Icon, type IconName } from '../ds/Icon';
 import { settings } from '../game/settings';
 import { demoTarget, isDone, levelSize, roundNumber, roundsInLevel, subName, type Game, type GameState, type Mark } from '../game/useGame';
 import { C, Card, DISPLAY, Glow, PASTEL, Pill, PrimaryButton, SHADOW, TextButton, col, kicker } from '../ui';
 
 export function RoundScreen({ game }: { game: Game }) {
-  const { s, round } = game;
-  const inIntro = !s.revealed && s.phase === 'intro';
-  const body: ReactNode = inIntro ? <div className="ss-narrow"><RoundIntro game={game} /></div> : <MessageRoundView game={game} round={round} />;
-  return (
-    <div data-screen-label={`Round L${round.lvl}-${roundNumber(s.cur)}`} style={{ paddingBottom: 48 }}>{body}</div>
-  );
+  return <div data-screen-label={`Round L${game.round.lvl}-${roundNumber(game.s.cur)}`}><MessageRoundView game={game} round={game.round} /></div>;
 }
 
 const noun = (r: Round) => (r.kind === 'voicemail' ? 'voicemail' : 'message');
-const roundLine = (s: GameState) => `LEVEL ${ROUNDS[s.cur].lvl} · ROUND ${roundNumber(s.cur)} OF ${levelSize(ROUNDS[s.cur].lvl)}`;
-
-// ---------------------------------------------------------------- intro
-
-function RoundIntro({ game: { s, round, actions } }: { game: Game }) {
-  const demo = s.cur === 0, kind = KINDS[round.kind];
-  const steps = ['Decide', 'Flag', 'Learn'];
-  const title = demo ? "Let's practice one together." : 'Real or scam?';
-  const body = demo ? "First you'll decide if it's real or a scam. Then we'll show you how to point out the red flags."
-    : `Read the ${noun(round)} and make your call. If you think it's a scam, you'll point out what gave it away.`;
-  const cta = demo ? 'Show me' : `Open the ${noun(round)}`;
-  const fg = C.text, sub = C.sub, label = C.faint;
-  return (
-    <div data-screen-label="Round intro" className="ss-fill" style={col(28, { paddingTop: 4 })}>
-      <div style={{ display: 'flex', gap: 6 }}>
-        {steps.map((l, k) => (
-          <div key={l} style={col(6, { flex: 1 })}>
-            <div style={{ height: 6, borderRadius: 999, background: k === 0 ? 'linear-gradient(90deg,#2A5FFC,#7E2CE2)' : C.surface2 }} />
-            <span style={{ fontSize: 14, color: k === 0 ? fg : C.faint, fontWeight: 500 }}>{l}</span>
-          </div>
-        ))}
-      </div>
-      <div style={col(24, { flex: 1, justifyContent: 'center', animation: 'ss-rise .3s ease-out both' })}>
-        <div style={col(14, { alignItems: 'center', textAlign: 'center' })}>
-          <div style={{ width: 88, height: 88, borderRadius: '50%', background: C.blue, color: '#fff', boxShadow: '0 0 0 10px rgba(42,95,252,0.12), 0 12px 40px rgba(42,95,252,0.30)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={kind[1]} size={40} /></div>
-          <span style={{ fontSize: 15, fontWeight: 500, letterSpacing: '0.06em', color: label }}>{demo ? 'PRACTICE ROUND' : roundLine(s)}</span>
-          <span style={{ ...DISPLAY, fontSize: 46, lineHeight: 1.04, textWrap: 'balance', color: fg }}>{title}</span>
-          <span style={{ fontSize: 20, lineHeight: 1.45, color: sub, textWrap: 'pretty', maxWidth: 440 }}>{body}</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, background: C.surface, border: `1px solid ${C.hair}`, borderRadius: 22, padding: '16px 20px' }}>
-          <div style={col(2, { flex: 1 })}>
-            <span style={{ fontSize: 13, fontWeight: 500, letterSpacing: '0.06em', color: C.faint }}>UP NEXT · {kind[0].toUpperCase()}</span>
-            <span style={{ fontSize: 18, lineHeight: 1.35 }}>{round.teaser}</span>
-          </div>
-        </div>
-      </div>
-      <PrimaryButton onClick={actions.beginRound}>{cta}</PrimaryButton>
-    </div>
-  );
-}
 
 // ---------------------------------------------------------------- message rounds
 
@@ -63,15 +18,15 @@ type Piece =
   | { plain: false; t: string; c: Mark; link: boolean };
 
 /** Splits a section's parts into plain text and tappable pieces. Ordinary phrases become neutral tap targets. */
-function pieces(parts: Part[], keyPrefix: string, canTap: boolean, s: GameState): Piece[] {
+function pieces(parts: Part[], keyPrefix: string, canTap: boolean): Piece[] {
   return parts.flatMap((p, k): Piece[] => {
-    if (typeof p !== 'string') return [{ plain: false, t: subName(s, p.t), c: p.c, link: !!p.link }];
-    if (!canTap || !/\w{2,}/.test(p)) return [{ plain: true, t: subName(s, p) }];
+    if (typeof p !== 'string') return [{ plain: false, t: subName(p.t), c: p.c, link: !!p.link }];
+    if (!canTap || !/\w{2,}/.test(p)) return [{ plain: true, t: subName(p) }];
     // Keep surrounding whitespace untappable so highlights hug the words.
     const [, lead, mid, trail] = p.match(/^(\s*)([\s\S]*?)(\s*)$/)!;
     return [
       ...(lead ? [{ plain: true as const, t: lead }] : []),
-      { plain: false, t: subName(s, mid), c: keyPrefix + k, link: false },
+      { plain: false, t: subName(mid), c: keyPrefix + k, link: false },
       ...(trail ? [{ plain: true as const, t: trail }] : []),
     ];
   });
@@ -120,7 +75,6 @@ const secOf = (round: Round, k: SectionKind) => round.sections.find(x => x.s ===
 
 /** iOS Messages look for text rounds. */
 function TextMessage({ game, round }: { game: Game; round: Round }) {
-  const { s } = game;
   const head = secOf(round, 'head'), first = head[0];
   const unknown = /^\+/.test(typeof first === 'string' ? first : first?.t ?? '');
   const ios: CSSProperties = { fontFamily: "-apple-system,'SF Pro Text',system-ui,var(--font-sans)" };
@@ -131,7 +85,7 @@ function TextMessage({ game, round }: { game: Game; round: Round }) {
         <div style={col(4, { alignItems: 'center' })}>
           <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'linear-gradient(180deg,#a5a9b1,#868a92)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name="User" size={28} /></div>
           <span style={{ fontSize: 15, color: '#000', lineHeight: 1.9 }}>
-            <Pieces list={pieces(head, 'h', true, s)} game={game} round={round} im head /> ›
+            <Pieces list={pieces(head, 'h', true)} game={game} round={round} im head /> ›
           </span>
         </div>
         <span />
@@ -139,7 +93,7 @@ function TextMessage({ game, round }: { game: Game; round: Round }) {
       <div style={col(6, { padding: '14px 14px 18px', background: '#fff' })}>
         <span style={{ fontSize: 13, color: '#8e8e93', textAlign: 'center', lineHeight: 1.35 }}>Text Message<br />{String(secOf(round, 'meta')[0] ?? 'Today')}</span>
         <div style={{ alignSelf: 'flex-start', maxWidth: '86%', background: '#e9e9eb', color: '#000', borderRadius: '20px 20px 20px 6px', padding: '8px 14px', fontSize: 18, lineHeight: 1.95, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', marginTop: 6 }}>
-          <Pieces list={pieces(secOf(round, 'body'), 'b', true, s)} game={game} round={round} im />
+          <Pieces list={pieces(secOf(round, 'body'), 'b', true)} game={game} round={round} im />
         </div>
         {unknown && (
           <span style={{ fontSize: 13, color: '#8e8e93', textAlign: 'center', lineHeight: 1.4, paddingTop: 10 }}>
@@ -157,7 +111,6 @@ function TextMessage({ game, round }: { game: Game; round: Round }) {
 
 /** iOS Voicemail look: caller, a (static) player and the transcript. */
 function VoicemailCard({ game, round }: { game: Game; round: Round }) {
-  const { s } = game;
   const [when, length = '0:30'] = String(secOf(round, 'meta')[0] ?? 'Today').split(' · ');
   const ios: CSSProperties = { fontFamily: "-apple-system,'SF Pro Text',system-ui,var(--font-sans)" };
   const blue = '#007aff', grey = '#8e8e93';
@@ -166,7 +119,7 @@ function VoicemailCard({ game, round }: { game: Game; round: Round }) {
       <div style={col(2, { padding: '18px 20px 12px' })}>
         <span style={{ fontSize: 13, fontWeight: 600, color: grey, letterSpacing: '0.04em' }}>VOICEMAIL</span>
         <span style={{ fontSize: 22, fontWeight: 700, color: '#000', lineHeight: 1.6 }}>
-          <Pieces list={pieces(secOf(round, 'head'), 'h', true, s)} game={game} round={round} im head />
+          <Pieces list={pieces(secOf(round, 'head'), 'h', true)} game={game} round={round} im head />
         </span>
         <span style={{ fontSize: 15, color: grey }}>{when}</span>
       </div>
@@ -182,7 +135,7 @@ function VoicemailCard({ game, round }: { game: Game; round: Round }) {
       <div style={col(6, { borderTop: '1px solid #e5e5ea', padding: '14px 20px 18px' })}>
         <span style={{ fontSize: 13, fontWeight: 600, color: grey }}>Transcription</span>
         <div style={{ fontSize: 18, lineHeight: 1.9, color: '#000', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>
-          <Pieces list={pieces(secOf(round, 'body'), 'b', true, s)} game={game} round={round} im />
+          <Pieces list={pieces(secOf(round, 'body'), 'b', true)} game={game} round={round} im />
         </div>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-around', borderTop: '1px solid #e5e5ea', padding: '12px 20px', fontSize: 16, color: blue }}>
@@ -210,7 +163,7 @@ function MessageCard({ game, round }: { game: Game; round: Round }) {
         const [pad, fs, fw, lh, color, bd] = SEC[sec.s];
         return (
           <div key={si} style={{ padding: pad, fontSize: fs, fontWeight: fw, lineHeight: lh, color, borderBottom: bd, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>
-            <Pieces list={pieces(sec.p, `s${si}_`, sec.s !== 'meta', game.s)} game={game} round={round} im={false} />
+            <Pieces list={pieces(sec.p, `s${si}_`, sec.s !== 'meta')} game={game} round={round} im={false} />
           </div>
         );
       })}
@@ -239,17 +192,9 @@ function MessageRoundView({ game, round }: { game: Game; round: Round }) {
   const inFlags = !s.revealed && s.phase === 'flags';
   const head = s.revealed ? <RevealHead game={game} /> : inFlags ? <FlagsHead game={game} round={round} /> : <VerdictHead game={game} />;
   const ctrl = s.revealed ? <RevealBody game={game} /> : inFlags ? <FlagsControls game={game} round={round} /> : <VerdictControls game={game} />;
-  const nums = roundsInLevel(round.lvl);
   return (
     <div className="ss-round">
       <div style={col(18, { gridArea: 'head' })}>
-        <div style={{ display: 'inline-flex', alignSelf: 'flex-start', alignItems: 'center', gap: 10, padding: '6px 14px 6px 6px', borderRadius: 999, background: C.surface, border: `1px solid ${C.hair}` }}>
-          <span style={{ width: 28, height: 28, borderRadius: '50%', background: C.blue, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={KINDS[round.kind][1]} size={15} /></span>
-          <span style={{ fontSize: 14, fontWeight: 600 }}>{s.cur === 0 ? 'Practice round' : `Level ${round.lvl} · ${LEVELS[round.lvl - 1][0]}`}</span>
-          <span style={{ display: 'flex', gap: 4 }}>
-            {nums.map(i => <span key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: i === s.cur ? C.ink : isDone(s, i) ? C.teal : C.locked }} />)}
-          </span>
-        </div>
         {head}
       </div>
       <div className="ss-round-msg" style={{ gridArea: 'msg' }}>

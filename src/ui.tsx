@@ -4,7 +4,7 @@ import type { BadgeView } from './game/useGame';
 
 /**
  * Two palettes:
- * - page colours (bg … hair) for the light, Aura-blue app chrome;
+ * - page colours (bg … hair) for the light, Aura-blue page;
  * - mockup ink (ink … border) for the light phone/email mockups, which stay white like real screens.
  */
 export const C = {
@@ -18,6 +18,8 @@ export const C = {
 export const SHADOW = '0 1px 2px rgba(25,47,112,0.06),0 10px 30px rgba(25,47,112,0.10)';
 /** The light Aura app-icon gradient: periwinkle to white. */
 export const PASTEL = 'linear-gradient(135deg,#a9c6ff 0%,#cfdfff 50%,#f2f6ff 100%)';
+/** Editorial serif for page headlines, like aura.com's free-tool pages. */
+export const SERIF: CSSProperties = { fontFamily: "'Source Serif 4',Georgia,serif", fontWeight: 400, letterSpacing: '-0.01em' };
 export const DISPLAY: CSSProperties = { fontFamily: "'Inter Tight','Inter',system-ui,sans-serif", letterSpacing: '-0.035em', fontWeight: 600 };
 
 export const col = (gap: number, extra?: CSSProperties): CSSProperties => ({ display: 'flex', flexDirection: 'column', gap, ...extra });
@@ -52,24 +54,19 @@ export function Glow({ at = 'bottom', style }: { at?: 'bottom' | 'top'; style?: 
   return <div aria-hidden="true" className={`ss-glow ss-glow-${at}`} style={style} />;
 }
 
-/** The Aura mark (Λ with a bar) on the light-blue app-icon tile. */
-export function AuraMark({ size = 40 }: { size?: number }) {
+/**
+ * The ĀURA wordmark, drawn as a stand-in: Λ-shaped A's with a bar over the first.
+ * Swap in the official logo SVG from brand when available.
+ */
+export function Wordmark({ color = '#fff', height = 22 }: { color?: string; height?: number }) {
   return (
-    <span style={{ width: size, height: size, borderRadius: size * 0.28, background: PASTEL, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-      <svg width={size * 0.56} height={size * 0.56} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <rect x="6.5" y="2.5" width="11" height="2.4" fill={C.mark} />
-        <path d="M4.2 21.5 L12 7.6 L19.8 21.5" stroke={C.mark} strokeWidth="2.4" strokeLinejoin="miter" />
-      </svg>
-    </span>
-  );
-}
-
-/** A word set in a white pill inside a headline, like aura.com's "your [identity] staying safe". */
-export function PillWord({ icon, children }: { icon?: 'Shield' | 'Search3'; children: ReactNode }) {
-  return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.18em', background: C.blue, color: '#fff', borderRadius: 999, padding: '0.02em 0.32em 0.06em', verticalAlign: '0.04em', lineHeight: 1.1 }}>
-      {icon && <Icon name={icon} size={0} style={{ width: '0.72em', height: '0.72em' }} />}{children}
-    </span>
+    <svg height={height} viewBox="0 0 84 22" fill="none" role="img" aria-label="Aura">
+      <rect x="2" y="0" width="12" height="2" fill={color} />
+      <path d="M1 21.5 L8 5 L15 21.5" stroke={color} strokeWidth="2" />
+      <path d="M23 5 V15 a6 6 0 0 0 12 0 V5" stroke={color} strokeWidth="2" />
+      <path d="M44 21.5 V5 h6.5 a4.8 4.8 0 0 1 0 9.6 H44 M50.5 14.6 L56 21.5" stroke={color} strokeWidth="2" />
+      <path d="M62 21.5 L69 5 L76 21.5" stroke={color} strokeWidth="2" />
+    </svg>
   );
 }
 
