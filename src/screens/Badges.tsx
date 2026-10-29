@@ -6,10 +6,10 @@ export function Badges({ game: { s, actions } }: { game: Game }) {
   const badges = BADGES.map((_, li) => badgeView(s, li));
   const ob = s.openB != null ? badges[s.openB] : null;
   return (
-    <div data-screen-label="Badges" style={col(18, { padding: '4px 20px 48px' })}>
+    <div data-screen-label="Badges" className="ss-narrow ss-narrow-wide" style={col(18, { paddingBlock: '4px 48px' })}>
       <div style={col(4)}>
         <span style={{ fontSize: 32, fontWeight: 600, lineHeight: 1.2 }}>Your badges</span>
-        <span style={{ fontSize: 17, color: C.muted }}>Each level teaches one habit. Finish all 3 rounds to earn its badge.</span>
+        <span style={{ fontSize: 17, color: C.muted }}>Each level teaches one habit. Finish every round in a level to earn its badge.</span>
       </div>
       {ob && s.openB != null && (
         <div style={col(12, { background: HERO, color: '#fff', borderRadius: 28, padding: '28px 22px', alignItems: 'center', textAlign: 'center', animation: 'ss-rise .25s ease-out' })}>
@@ -26,7 +26,7 @@ export function Badges({ game: { s, actions } }: { game: Game }) {
           )}
         </div>
       )}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+      <div className="ss-badge-grid">
         {badges.map((b, li) => (
           <button key={b.name} onClick={() => actions.openBadge(li)} style={{ background: '#fff', border: `2px solid ${s.openB === li ? C.blue : 'transparent'}`, borderRadius: 24, boxShadow: SHADOW, padding: '18px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, cursor: 'pointer', color: C.ink, textAlign: 'center' }}>
             <div style={{ opacity: b.op }}><Medallion b={b} size={76} core={47} icon={28} /></div>

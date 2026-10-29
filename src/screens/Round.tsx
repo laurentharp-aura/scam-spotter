@@ -1,23 +1,24 @@
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { BADGES, KINDS, ROUNDS, isBad, type CallRound, type MessageRound, type Part, type SectionKind } from '../data/content';
 import { Icon, type IconName } from '../ds/Icon';
 import { settings } from '../game/settings';
-import { demoTarget, roundNumber, subName, type Game, type GameState, type Mark } from '../game/useGame';
+import { demoTarget, isDone, levelSize, roundNumber, subName, type Game, type GameState, type Mark } from '../game/useGame';
 import { C, Card, Pill, PrimaryButton, SHADOW, TextButton, col, kicker } from '../ui';
 
 export function RoundScreen({ game, dark }: { game: Game; dark: boolean }) {
   const { s, round } = game;
-  const rk = roundNumber(s.cur);
   const inIntro = !s.revealed && s.phase === 'intro';
+  let body: ReactNode;
+  if (inIntro) body = <div className="ss-narrow"><RoundIntro game={game} dark={dark} /></div>;
+  else if (round.kind !== 'call') body = <MessageRoundView game={game} round={round} />;
+  else if (!s.revealed) body = <div className="ss-narrow"><CallPlay game={game} round={round} /></div>;
+  else body = <div className="ss-narrow" style={col(18)}><RevealHead game={game} /><RevealBody game={game} /></div>;
   return (
-    <div data-screen-label={`Round L${round.lvl}-${rk}`} style={col(18, { padding: '0 20px 48px' })}>
-      {inIntro && <RoundIntro game={game} dark={dark} />}
-      {round.kind !== 'call' && !inIntro && <MessagePlay game={game} round={round} />}
-      {round.kind === 'call' && !inIntro && !s.revealed && <CallPlay game={game} round={round} />}
-      {s.revealed && <Reveal game={game} />}
-    </div>
+    <div data-screen-label={`Round L${round.lvl}-${roundNumber(s.cur)}`} style={{ paddingBottom: 48 }}>{body}</div>
   );
 }
+
+const roundLine = (s: GameState) => `LEVEL ${ROUNDS[s.cur].lvl} · ROUND ${roundNumber(s.cur)} OF ${levelSize(ROUNDS[s.cur].lvl)}`;
 
 // ---------------------------------------------------------------- intro
 
@@ -32,7 +33,7 @@ function RoundIntro({ game: { s, round, actions }, dark }: { game: Game; dark: b
   // Call intros sit on the navy call background, so their text goes light.
   const fg = dark ? '#fff' : C.ink, sub = dark ? '#cfe0ff' : C.body, label = dark ? '#a3aebf' : C.muted;
   return (
-    <div data-screen-label="Round intro" style={col(28, { minHeight: 'calc(100vh - 120px)', paddingTop: 4 })}>
+    <div data-screen-label="Round intro" className="ss-fill" style={col(28, { paddingTop: 4 })}>
       <div style={{ display: 'flex', gap: 6 }}>
         {steps.map((l, k) => (
           <div key={l} style={col(6, { flex: 1 })}>
@@ -44,9 +45,9 @@ function RoundIntro({ game: { s, round, actions }, dark }: { game: Game; dark: b
       <div style={col(24, { flex: 1, justifyContent: 'center', animation: 'ss-rise .3s ease-out both' })}>
         <div style={col(14, { alignItems: 'center', textAlign: 'center' })}>
           <div style={{ width: 88, height: 88, borderRadius: '50%', background: '#ebf2ff', color: C.blue, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={kind[1]} size={40} /></div>
-          <span style={{ fontSize: 15, fontWeight: 500, letterSpacing: '0.06em', color: label }}>{demo ? 'PRACTICE ROUND' : `LEVEL ${round.lvl} · ROUND ${roundNumber(s.cur)} OF 3`}</span>
+          <span style={{ fontSize: 15, fontWeight: 500, letterSpacing: '0.06em', color: label }}>{demo ? 'PRACTICE ROUND' : roundLine(s)}</span>
           <span style={{ fontSize: 34, fontWeight: 600, lineHeight: 1.15, textWrap: 'balance', color: fg }}>{title}</span>
-          <span style={{ fontSize: 20, lineHeight: 1.45, color: sub, textWrap: 'pretty', maxWidth: 340 }}>{body}</span>
+          <span style={{ fontSize: 20, lineHeight: 1.45, color: sub, textWrap: 'pretty', maxWidth: 440 }}>{body}</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, background: '#fff', borderRadius: 20, boxShadow: SHADOW, padding: '16px 18px' }}>
           <div style={col(2, { flex: 1 })}>
@@ -103,7 +104,7 @@ function Pieces({ list, game, round, im, head }: { list: Piece[]; game: Game; ro
           textDecoration: p.link ? 'underline' : active ? 'underline dotted #a3aebf' : 'none', textUnderlineOffset: 5,
         };
         return (
-          <span key={i} role="button" tabIndex={active ? 0 : -1} onClick={() => actions.tap(p.c)}
+          <span key={i} role="button" tabIndex={active ? 0 : -1} className={active && !m ? 'ss-tap' : undefined} onClick={() => actions.tap(p.c)}
             onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); actions.tap(p.c); } }} style={style}>
             {p.t}
             {m && (
@@ -127,7 +128,7 @@ function TextMessage({ game, round }: { game: Game; round: MessageRound }) {
   const unknown = /^\+/.test(typeof first === 'string' ? first : first?.t ?? '');
   const ios: CSSProperties = { fontFamily: "-apple-system,'SF Pro Text',system-ui,var(--font-sans)" };
   return (
-    <div style={{ background: '#fff', borderRadius: 28, boxShadow: SHADOW, overflow: 'hidden', ...ios }}>
+    <div style={{ background: '#fff', borderRadius: 28, boxShadow: SHADOW, overflow: 'hidden', maxWidth: 440, margin: '0 auto', ...ios }}>
       <div style={{ background: '#f6f6f6', borderBottom: '1px solid #d1d1d6', padding: '12px 16px 10px', display: 'grid', gridTemplateColumns: '40px 1fr 40px', alignItems: 'center' }}>
         <span style={{ color: '#007aff', display: 'flex' }}><Icon name="ChevronLeft" size={26} /></span>
         <div style={col(4, { alignItems: 'center' })}>
@@ -190,90 +191,114 @@ const DEMO_COACH = [
   'Last one — tap the link. FedEx lives at fedex.com, not fdx-ship.co.',
 ];
 
-function MessagePlay({ game, round }: { game: Game; round: MessageRound }) {
-  const { s, actions } = game;
-  const rk = roundNumber(s.cur), demo = s.cur === 0, tutorial = round.lvl === 1;
+/**
+ * Message rounds use three areas: `head` (step title), `msg` (the message) and `ctrl` (choices / results).
+ * Phones stack them head → msg → ctrl; desktop puts the message on the left and head + ctrl in a side panel.
+ */
+function MessageRoundView({ game, round }: { game: Game; round: MessageRound }) {
+  const { s } = game;
+  const inFlags = !s.revealed && s.phase === 'flags';
+  const head = s.revealed ? <RevealHead game={game} /> : inFlags ? <FlagsHead game={game} round={round} /> : <VerdictHead game={game} />;
+  const ctrl = s.revealed ? <RevealBody game={game} /> : inFlags ? <FlagsControls game={game} round={round} /> : <VerdictControls game={game} />;
+  return (
+    <div className="ss-round">
+      <div style={{ gridArea: 'head' }}>{head}</div>
+      <div className="ss-round-msg" style={{ gridArea: 'msg' }}>
+        {round.kind === 'text' ? <TextMessage game={game} round={round} /> : <MessageCard game={game} round={round} />}
+      </div>
+      <div style={{ gridArea: 'ctrl' }}>{ctrl}</div>
+    </div>
+  );
+}
+
+function FlagsHead({ game: { s }, round }: { game: Game; round: MessageRound }) {
+  const demo = s.cur === 0, tutorial = round.lvl === 1;
   const badCount = round.clues.filter(isBad).length;
-  const foundBad = s.marked.filter(c => typeof c === 'number' && isBad(round.clues[c])).length;
-  const counted = tutorial || s.wrongVerdict;
-  const inFlags = !s.revealed && s.phase === 'flags', inVerdict = !s.revealed && s.phase === 'verdict';
   const dt = demoTarget(s);
   const prompt = s.wrongVerdict || (tutorial && !demo) ? `Find the ${badCount} red flags.` : demo ? `Now find the ${badCount} red flags.` : 'What gave it away?';
-
   return (
-    <div style={col(18)}>
-      {inFlags && (
-        <div style={col(8)}>
-          {s.wrongVerdict && (
-            <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', background: '#fff5e5', borderRadius: 20, padding: 16, marginBottom: 6, animation: 'ss-rise .3s ease-out both' }}>
-              <span style={{ width: 36, height: 36, borderRadius: '50%', background: C.orange, color: C.ink, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name="Info" size={20} /></span>
-              <div style={col(4)}>
-                <span style={{ fontSize: 19, fontWeight: 600 }}>Ah, this one was tricky. It's a scam.</span>
-                <span style={{ fontSize: 16, lineHeight: 1.45, color: C.body }}>Lots of people miss it. Let's find what gives it away.</span>
-              </div>
-            </div>
-          )}
-          <span style={kicker()}>{demo ? "PRACTICE ROUND · WE'LL GUIDE YOU" : `LEVEL ${round.lvl} · ROUND ${rk} OF 3 · STEP 2 OF 2`}</span>
-          <span style={{ fontSize: 28, fontWeight: 600, lineHeight: 1.1 }}>{prompt}</span>
-          {demo ? (
-            <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', background: '#fff', borderRadius: 16, boxShadow: SHADOW, padding: '12px 14px' }}>
-              <span style={{ width: 28, height: 28, borderRadius: '50%', background: '#ebf2ff', color: C.navy, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontWeight: 500, fontSize: 14 }}>{dt != null ? dt + 1 : '✓'}</span>
-              <span style={{ fontSize: 17, lineHeight: 1.4 }}>{dt != null ? DEMO_COACH[dt] : 'You found all 4! Tap the blue button to keep going.'}</span>
-            </div>
-          ) : (
-            <span style={{ fontSize: 17, color: C.muted, lineHeight: 1.4 }}>
-              {s.wrongVerdict ? 'Tap the parts that give it away. Learning them now makes the next one easier.' : 'Tap the words or phrases that seem off.'}
-            </span>
-          )}
-        </div>
-      )}
-
-      {round.kind === 'text' ? <TextMessage game={game} round={round} /> : <MessageCard game={game} round={round} />}
-
-      {inFlags && (
-        <div style={col(14)}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 36 }}>
-            {counted && Array.from({ length: badCount }, (_, i) => {
-              const on = foundBad > i;
-              return <span key={i} style={{ width: 30, height: 30, borderRadius: '50%', border: `1.5px ${on ? 'solid' : 'dashed'} ${C.border}`, background: on ? C.orange : C.line, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 500, fontSize: 14 }}>{on ? i + 1 : ''}</span>;
-            })}
-            <span style={{ fontSize: 17, fontWeight: 600, marginLeft: 4, flex: 1 }}>
-              {counted ? (foundBad === badCount ? `All ${badCount} found!` : `${foundBad} of ${badCount} found`) : (s.marked.length ? `${s.marked.length} marked` : 'Nothing marked yet')}
-            </span>
-            {!demo && <button onClick={actions.useHint} style={{ minHeight: 44, padding: '0 14px', borderRadius: 999, border: '1.5px dashed #a3aebf', background: '#fff', fontSize: 16, fontWeight: 500, color: C.ink, cursor: 'pointer' }}>Hint</button>}
+    <div style={col(8)}>
+      {s.wrongVerdict && (
+        <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', background: '#fff5e5', borderRadius: 20, padding: 16, marginBottom: 6, animation: 'ss-rise .3s ease-out both' }}>
+          <span style={{ width: 36, height: 36, borderRadius: '50%', background: C.orange, color: C.ink, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name="Info" size={20} /></span>
+          <div style={col(4)}>
+            <span style={{ fontSize: 19, fontWeight: 600 }}>Ah, this one was tricky. It's a scam.</span>
+            <span style={{ fontSize: 16, lineHeight: 1.45, color: C.body }}>Lots of people miss it. Let's find what gives it away.</span>
           </div>
-          {s.quip && <div style={{ background: C.ink, color: '#fff', borderRadius: 18, padding: '14px 16px', fontSize: 18, lineHeight: 1.45, animation: 'ss-rise .25s ease-out' }}>{s.quip}</div>}
-          <PrimaryButton size={19} shadow={false} onClick={actions.reveal} disabled={!s.marked.length} style={{ opacity: s.marked.length ? 1 : 0.4 }}>
-            {s.marked.length ? 'See results' : 'Tap a red flag to continue'}
-          </PrimaryButton>
-          {!demo && <TextButton onClick={actions.skipFlags}>Skip — show me the answer</TextButton>}
         </div>
       )}
+      <span style={kicker()}>{demo ? "PRACTICE ROUND · WE'LL GUIDE YOU" : `${roundLine(s)} · STEP 2 OF 2`}</span>
+      <span style={{ fontSize: 28, fontWeight: 600, lineHeight: 1.1 }}>{prompt}</span>
+      {demo ? (
+        <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', background: '#fff', borderRadius: 16, boxShadow: SHADOW, padding: '12px 14px' }}>
+          <span style={{ width: 28, height: 28, borderRadius: '50%', background: '#ebf2ff', color: C.navy, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontWeight: 500, fontSize: 14 }}>{dt != null ? dt + 1 : '✓'}</span>
+          <span style={{ fontSize: 17, lineHeight: 1.4 }}>{dt != null ? DEMO_COACH[dt] : 'You found all 4! Tap the blue button to keep going.'}</span>
+        </div>
+      ) : (
+        <span style={{ fontSize: 17, color: C.muted, lineHeight: 1.4 }}>
+          {s.wrongVerdict ? 'Tap the parts that give it away. Learning them now makes the next one easier.' : 'Tap the words or phrases that seem off.'}
+        </span>
+      )}
+    </div>
+  );
+}
 
-      {inVerdict && (
-        <div style={col(12)}>
-          <span style={kicker()}>{`LEVEL ${round.lvl} · ROUND ${rk} OF 3 · STEP 1 OF 2`}</span>
-          <span style={{ fontSize: 26, fontWeight: 600, lineHeight: 1.1 }}>Is this real or a scam?</span>
-          {demo && (
-            <div style={{ background: C.ink, color: '#fff', borderRadius: 16, padding: '12px 14px', fontSize: 17, lineHeight: 1.4 }}>
-              {s.verdict === 'scam' ? 'Now tap “Lock it in.”' : 'Read it closely. Something is off — this one is a scam. Tap Scam.'}
-            </div>
-          )}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            {(['legit', 'scam'] as const).map(id => {
-              const on = s.verdict === id;
-              return (
-                <button key={id} onClick={() => actions.pickVerdict(id)} aria-pressed={on} style={{
-                  minHeight: 64, borderRadius: 999, border: `2px solid ${on ? C.blue : 'transparent'}`, background: on ? '#ebf2ff' : '#fff',
-                  boxShadow: on ? 'none' : SHADOW, outline: demo && id === 'scam' && !on ? '3px solid #FFA722' : 'none', outlineOffset: 3,
-                  fontSize: 19, fontWeight: 600, cursor: 'pointer', color: C.ink,
-                }}>{id === 'legit' ? 'Real' : 'Scam'}</button>
-              );
-            })}
-          </div>
-          <PrimaryButton size={19} shadow={false} onClick={actions.decide} disabled={!s.verdict} style={{ opacity: s.verdict ? 1 : 0.4 }}>Lock it in</PrimaryButton>
+function FlagsControls({ game: { s, actions }, round }: { game: Game; round: MessageRound }) {
+  const demo = s.cur === 0, counted = round.lvl === 1 || s.wrongVerdict;
+  const badCount = round.clues.filter(isBad).length;
+  const foundBad = s.marked.filter(c => typeof c === 'number' && isBad(round.clues[c])).length;
+  return (
+    <div style={col(14)}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 36, flexWrap: 'wrap' }}>
+        {counted && Array.from({ length: badCount }, (_, i) => {
+          const on = foundBad > i;
+          return <span key={i} style={{ width: 30, height: 30, borderRadius: '50%', border: `1.5px ${on ? 'solid' : 'dashed'} ${C.border}`, background: on ? C.orange : C.line, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 500, fontSize: 14 }}>{on ? i + 1 : ''}</span>;
+        })}
+        <span style={{ fontSize: 17, fontWeight: 600, marginLeft: 4, flex: 1 }}>
+          {counted ? (foundBad === badCount ? `All ${badCount} found!` : `${foundBad} of ${badCount} found`) : (s.marked.length ? `${s.marked.length} marked` : 'Nothing marked yet')}
+        </span>
+        {!demo && <button onClick={actions.useHint} style={{ minHeight: 44, padding: '0 14px', borderRadius: 999, border: '1.5px dashed #a3aebf', background: '#fff', fontSize: 16, fontWeight: 500, color: C.ink, cursor: 'pointer' }}>Hint</button>}
+      </div>
+      {s.quip && <div style={{ background: C.ink, color: '#fff', borderRadius: 18, padding: '14px 16px', fontSize: 18, lineHeight: 1.45, animation: 'ss-rise .25s ease-out' }}>{s.quip}</div>}
+      <PrimaryButton size={19} shadow={false} onClick={actions.reveal} disabled={!s.marked.length} style={{ opacity: s.marked.length ? 1 : 0.4 }}>
+        {s.marked.length ? 'See results' : 'Tap a red flag to continue'}
+      </PrimaryButton>
+      {!demo && <TextButton onClick={actions.skipFlags}>Skip — show me the answer</TextButton>}
+    </div>
+  );
+}
+
+function VerdictHead({ game: { s } }: { game: Game }) {
+  return (
+    <div style={col(12)}>
+      <span style={kicker()}>{`${roundLine(s)} · STEP 1 OF 2`}</span>
+      <span style={{ fontSize: 26, fontWeight: 600, lineHeight: 1.1 }}>Is this real or a scam?</span>
+      {s.cur === 0 && (
+        <div style={{ background: C.ink, color: '#fff', borderRadius: 16, padding: '12px 14px', fontSize: 17, lineHeight: 1.4 }}>
+          {s.verdict === 'scam' ? 'Now tap “Lock it in.”' : 'Read it closely. Something is off — this one is a scam. Tap Scam.'}
         </div>
       )}
+    </div>
+  );
+}
+
+function VerdictControls({ game: { s, actions } }: { game: Game }) {
+  const demo = s.cur === 0;
+  return (
+    <div style={col(12)}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        {(['legit', 'scam'] as const).map(id => {
+          const on = s.verdict === id;
+          return (
+            <button key={id} className="ss-choice" onClick={() => actions.pickVerdict(id)} aria-pressed={on} style={{
+              minHeight: 64, borderRadius: 999, border: `2px solid ${on ? C.blue : 'transparent'}`, background: on ? '#ebf2ff' : '#fff',
+              boxShadow: on ? 'none' : SHADOW, outline: demo && id === 'scam' && !on ? '3px solid #FFA722' : 'none', outlineOffset: 3,
+              fontSize: 19, fontWeight: 600, cursor: 'pointer', color: C.ink,
+            }}>{id === 'legit' ? 'Real' : 'Scam'}</button>
+          );
+        })}
+      </div>
+      <PrimaryButton size={19} shadow={false} onClick={actions.decide} disabled={!s.verdict} style={{ opacity: s.verdict ? 1 : 0.4 }}>Lock it in</PrimaryButton>
     </div>
   );
 }
@@ -283,9 +308,9 @@ function MessagePlay({ game, round }: { game: Game; round: MessageRound }) {
 function CallPlay({ game: { s, actions }, round }: { game: Game; round: CallRound }) {
   const log = s.log || [{ who: 'Caller', text: round.steps[0].caller }];
   return (
-    <div style={col(16, { color: '#fff', minHeight: 'calc(100vh - 120px)' })}>
+    <div className="ss-fill" style={col(16, { color: '#fff' })}>
       <div style={col(6, { alignItems: 'center', textAlign: 'center', padding: '0 0 6px' })}>
-        <span style={kicker(14, '#a3aebf')}>LEVEL {round.lvl} · ROUND {roundNumber(s.cur)} OF 3</span>
+        <span style={kicker(14, '#a3aebf')}>{roundLine(s)}</span>
         <span style={{ fontSize: 30, fontWeight: 600 }}>{round.caller}</span>
         <span style={{ fontSize: 16, color: '#ffd89e' }}>Practice call · Caller ID can be faked</span>
       </div>
@@ -329,46 +354,53 @@ function CallPlay({ game: { s, actions }, round }: { game: Game; round: CallRoun
 // ---------------------------------------------------------------- reveal
 
 type Row = { label: string; why: string; dot: string; icon: IconName };
+type Outcome = { good: boolean; stamp: string; title: string; rowsTitle: string; rows: Row[] };
 
-function Reveal({ game: { s, round, actions } }: { game: Game }) {
-  let good: boolean, stamp: string, title: string, rowsTitle: string, rows: Row[];
+function outcome(s: GameState): Outcome {
+  const round = ROUNDS[s.cur];
   if (round.kind !== 'call') {
     const scam = round.answer === 'scam', right = s.verdict === round.answer;
-    good = !scam; stamp = scam ? 'SCAM' : 'REAL';
-    title = scam ? (right ? 'Correct. This is a scam.' : "This one was tricky — it's a scam.") : (right ? 'Correct. This message is real.' : 'This one is actually real.');
-    if (scam) {
-      const bads = round.clues.map((c, i) => ({ ...c, i })).filter(isBad);
-      rowsTitle = `RED FLAGS · YOU FOUND ${bads.filter(c => s.marked.includes(c.i)).length} OF ${bads.length}`;
-      rows = bads.map(c => { const m = s.marked.includes(c.i); return { label: c.label, why: m ? c.why : 'Missed — ' + c.why, dot: m ? C.teal : '#ffe9c9', icon: m ? 'Checkmark' : 'Search3' }; });
-    } else {
-      rowsTitle = "HOW YOU CAN TELL IT'S REAL";
-      rows = round.clues.map(c => ({ label: c.label, why: c.why, dot: '#ebfaf6', icon: 'Checkmark' }));
+    const title = scam ? (right ? 'Correct. This is a scam.' : "This one was tricky — it's a scam.") : (right ? 'Correct. This message is real.' : 'This one is actually real.');
+    if (!scam) {
+      return { good: true, stamp: 'REAL', title, rowsTitle: "HOW YOU CAN TELL IT'S REAL", rows: round.clues.map(c => ({ label: c.label, why: c.why, dot: '#ebfaf6', icon: 'Checkmark' })) };
     }
-  } else {
-    const E = {
-      good: ['SAFE', s.endTitle || (s.endedAt === 0 ? 'You ended the call before they asked for anything.' : 'You ended the call. That was the right move.')],
-      meh: ['ALMOST', round.meh || 'Good instinct, but there was a safer move.'],
-      bad: ['SCAM', "This scam works on a lot of people. Here's how it worked."],
-    } as const;
-    const end = s.end || 'good';
-    good = end === 'good'; [stamp, title] = E[end];
-    rowsTitle = 'TRICKS IT TRIED';
-    rows = round.tricks.map(t => ({ label: t[0], why: t[1], dot: C.orange, icon: 'Exclamation' }));
+    const bads = round.clues.map((c, i) => ({ ...c, i })).filter(isBad);
+    return {
+      good: false, stamp: 'SCAM', title, rowsTitle: `RED FLAGS · YOU FOUND ${bads.filter(c => s.marked.includes(c.i)).length} OF ${bads.length}`,
+      rows: bads.map(c => { const m = s.marked.includes(c.i); return { label: c.label, why: m ? c.why : 'Missed — ' + c.why, dot: m ? C.teal : '#ffe9c9', icon: m ? 'Checkmark' : 'Search3' }; }),
+    };
   }
-  const lvlLeft = ROUNDS.filter((rd, i) => rd.lvl === round.lvl && !s.done[i]).length;
+  const E = {
+    good: ['SAFE', s.endTitle || (s.endedAt === 0 ? 'You ended the call before they asked for anything.' : 'You ended the call. That was the right move.')],
+    meh: ['ALMOST', round.meh || 'Good instinct, but there was a safer move.'],
+    bad: ['SCAM', "This scam works on a lot of people. Here's how it worked."],
+  } as const;
+  const end = s.end || 'good';
+  return { good: end === 'good', stamp: E[end][0], title: E[end][1], rowsTitle: 'TRICKS IT TRIED', rows: round.tricks.map(t => ({ label: t[0], why: t[1], dot: C.orange, icon: 'Exclamation' })) };
+}
+
+function RevealHead({ game: { s } }: { game: Game }) {
+  const o = outcome(s);
+  return (
+    <div data-screen-label="Round reveal" style={col(10, { alignItems: 'flex-start', paddingTop: 4 })}>
+      <Pill bg={o.good ? '#ebfaf6' : '#fff5e5'} fg={o.good ? '#22705a' : '#96600f'} dot={o.good ? C.teal : C.orange} style={{ letterSpacing: '0.04em', animation: 'ss-rise .3s ease-out both' }}>{o.stamp}</Pill>
+      <span style={{ fontSize: 22, fontWeight: 600, lineHeight: 1.15, textWrap: 'pretty' }}>{o.title}</span>
+    </div>
+  );
+}
+
+function RevealBody({ game: { s, round, actions } }: { game: Game }) {
+  const o = outcome(s);
+  const size = levelSize(round.lvl);
+  const lvlLeft = ROUNDS.filter((rd, i) => rd.lvl === round.lvl && !isDone(s, i)).length;
   const [bName, bIcon, , bFill] = BADGES[round.lvl - 1];
   const say = round.kind === 'call' ? round.say : undefined;
   const lastInLevel = !(s.cur + 1 < ROUNDS.length && ROUNDS[s.cur + 1].lvl === round.lvl);
-
   return (
-    <div data-screen-label="Round reveal" style={col(18)}>
-      <div style={col(10, { alignItems: 'flex-start', paddingTop: 4 })}>
-        <Pill bg={good ? '#ebfaf6' : '#fff5e5'} fg={good ? '#22705a' : '#96600f'} dot={good ? C.teal : C.orange} style={{ letterSpacing: '0.04em', animation: 'ss-rise .3s ease-out both' }}>{stamp}</Pill>
-        <span style={{ fontSize: 22, fontWeight: 600, lineHeight: 1.15, textWrap: 'pretty' }}>{title}</span>
-      </div>
+    <div style={col(18)}>
       <Card style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <span style={{ padding: '14px 16px 6px', fontSize: 14, fontWeight: 500, letterSpacing: '0.06em', color: C.body }}>{rowsTitle}</span>
-        {rows.map(te => (
+        <span style={{ padding: '14px 16px 6px', fontSize: 14, fontWeight: 500, letterSpacing: '0.06em', color: C.body }}>{o.rowsTitle}</span>
+        {o.rows.map(te => (
           <div key={te.label} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '12px 16px', borderTop: `1px solid ${C.line}` }}>
             <span style={{ width: 30, height: 30, borderRadius: '50%', background: te.dot, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name={te.icon} size={16} /></span>
             <div style={col(2)}>
@@ -390,8 +422,8 @@ function Reveal({ game: { s, round, actions } }: { game: Game }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, background: '#fff', borderRadius: 20, boxShadow: SHADOW, padding: '14px 16px' }}>
         <span style={{ width: 48, height: 48, borderRadius: '50%', background: bFill, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name={bIcon} size={22} /></span>
         <div style={col(2, { flex: 1 })}>
-          <span style={{ fontSize: 17, fontWeight: 600, lineHeight: 1.3 }}>Round {roundNumber(s.cur)} of 3 complete</span>
-          <span style={{ fontSize: 15, color: C.muted }}>{lvlLeft ? `${lvlLeft} more to earn the ${bName} badge` : `${bName} badge unlocked`}</span>
+          <span style={{ fontSize: 17, fontWeight: 600, lineHeight: 1.3 }}>Round {roundNumber(s.cur)} of {size} complete</span>
+          <span style={{ fontSize: 15, color: C.muted }}>{lvlLeft ? `${lvlLeft} more to earn ${bName.startsWith('The ') ? '' : 'the '}${bName} badge` : `${bName} badge unlocked`}</span>
         </div>
       </div>
       <PrimaryButton shadow={false} onClick={actions.next}>{lastInLevel ? 'Finish level' : 'Next round'}</PrimaryButton>

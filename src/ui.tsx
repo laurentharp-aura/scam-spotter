@@ -19,7 +19,7 @@ type BtnProps = { onClick?: () => void; disabled?: boolean; children: ReactNode;
 /** Full-width blue pill. `size` sets font size; heights follow the prototype (60px, or 62px at 22px type). */
 export function PrimaryButton({ onClick, disabled, children, style, size = 20, shadow = true }: BtnProps & { size?: number; shadow?: boolean }) {
   return (
-    <button onClick={onClick} disabled={disabled} style={{
+    <button className="ss-btn" onClick={onClick} disabled={disabled} style={{
       minHeight: size >= 22 ? 62 : 60, borderRadius: 999, border: 'none', background: C.blue, color: '#fff', fontSize: size,
       fontWeight: 600, cursor: 'pointer', boxShadow: shadow ? SHADOW : undefined, ...style,
     }}>{children}</button>

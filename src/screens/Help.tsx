@@ -9,7 +9,7 @@ const HELP_STEPS = [
 
 export function Help() {
   return (
-    <div data-screen-label="10 Immediate help" style={col(16, { padding: '4px 20px 48px' })}>
+    <div data-screen-label="10 Immediate help" className="ss-narrow" style={col(16, { paddingBlock: '4px 48px' })}>
       <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.08em', color: '#96600f' }}>REAL HELP · NOT PART OF THE GAME</span>
       <span style={{ fontSize: 30, fontWeight: 600, lineHeight: 1.2 }}>Let's take this one step at a time.</span>
       {HELP_STEPS.map(hs => (

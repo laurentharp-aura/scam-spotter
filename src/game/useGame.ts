@@ -11,7 +11,8 @@ export type LogLine = { who: 'Caller' | 'You'; text: string };
 
 export type GameState = {
   screen: Screen; prev: Screen;
-  name: string; nameDraft: string; done: Record<number, true>; points: number; onboarded: boolean;
+  name: string; nameDraft: string; /** Finished rounds, keyed by round id. */
+  done: Record<string, true>; points: number; onboarded: boolean;
   cur: number; phase: Phase; revealed: boolean;
   // message rounds
   verdict: Verdict | null; wrongVerdict: boolean; marked: Mark[]; wrong: Mark | null; quip: string | null; hinted: number[];
@@ -21,7 +22,8 @@ export type GameState = {
   doneLevel: number; openB: number | null;
 };
 
-const KEY = 'scamSpotter.progress';
+// v2: progress keyed by round id (v1 used array positions, which shift when rounds are added).
+const KEY = 'scamSpotter.progress.v2';
 
 const freshRound = {
   marked: [], verdict: null, revealed: false, quip: null, step: 0, log: null, end: null, endTitle: null, endedAt: 0,
@@ -40,11 +42,13 @@ function initialState(): GameState {
 }
 
 // ---- selectors
-export const nextIdx = (s: GameState) => { const i = ROUNDS.findIndex((_, k) => !s.done[k]); return i < 0 ? ROUNDS.length : i; };
-export const playable = (s: GameState, i: number) => settings.unlockAll || i <= nextIdx(s) || !!s.done[i];
-export const levelEarned = (s: GameState, lvl: number) => ROUNDS.every((rd, i) => rd.lvl !== lvl || s.done[i]);
+export const isDone = (s: GameState, i: number) => !!s.done[ROUNDS[i].id];
+export const nextIdx = (s: GameState) => { const i = ROUNDS.findIndex((_, k) => !isDone(s, k)); return i < 0 ? ROUNDS.length : i; };
+export const playable = (s: GameState, i: number) => settings.unlockAll || i <= nextIdx(s) || isDone(s, i);
+export const levelEarned = (s: GameState, lvl: number) => ROUNDS.every((rd, i) => rd.lvl !== lvl || isDone(s, i));
 export const roundsInLevel = (lvl: number) => ROUNDS.map((r, i) => (r.lvl === lvl ? i : -1)).filter(i => i >= 0);
 export const roundNumber = (i: number) => roundsInLevel(ROUNDS[i].lvl).indexOf(i) + 1;
+export const levelSize = (lvl: number) => roundsInLevel(lvl).length;
 export const subName = (s: GameState, t: string) => t.replace('{name}', s.name || 'there');
 
 /** Practice round: the guided demo always targets the four FedEx flags in order. */
@@ -95,8 +99,8 @@ export function useGame() {
   const finish = (extra: Partial<GameState>) => {
     setS(st => {
       const n = { ...st, ...extra };
-      const pts = score(n, ROUNDS[n.cur]), first = !n.done[n.cur];
-      return { ...n, lastPts: pts, points: n.points + (first ? pts : 0), done: { ...n.done, [n.cur]: true } };
+      const id = ROUNDS[n.cur].id, pts = score(n, ROUNDS[n.cur]), first = !n.done[id];
+      return { ...n, lastPts: pts, points: n.points + (first ? pts : 0), done: { ...n.done, [id]: true } };
     });
     top();
   };

@@ -3,15 +3,58 @@
 @import './ds/tokens/typography.css';
 @import './ds/tokens/effects.css';
 
-html, body { margin: 0; padding: 0; background: #dde5ef; -webkit-font-smoothing: antialiased; }
+html, body { margin: 0; padding: 0; background: #EEF3FC; -webkit-font-smoothing: antialiased; }
 * { box-sizing: border-box; }
 button, input { font-family: inherit; }
 body { font-family: 'Inter', system-ui, sans-serif; }
 a { color: #2A5FFC; text-decoration: underline; }
 a:hover { color: #192f70; }
+:focus-visible { outline: 3px solid #6699ff; outline-offset: 2px; }
 
 .ss-press:active { transform: scale(0.98); }
 .ss-reply:hover { border-color: #6699ff !important; }
+.ss-btn:not(:disabled):hover { filter: brightness(1.08); }
+.ss-choice:hover { border-color: #b5cdff !important; }
+.ss-tap:hover { box-shadow: 0 0 0 2px #b5cdff; }
+
+/* ---------------------------------------------------------------- layout
+   Desktop-first web layout that still stacks to one column on phones (< 900px). */
+.ss-wrap { width: 100%; max-width: 1160px; margin: 0 auto; padding-inline: 20px; }
+.ss-narrow { width: 100%; max-width: 640px; margin-inline: auto; }
+.ss-fill { min-height: calc(100vh - 72px); }
+.ss-desktop { display: none !important; }
+
+.ss-home { display: grid; gap: 24px; }
+.ss-welcome { display: grid; gap: 22px; padding-block: 8px 40px; }
+.ss-welcome-art { width: 180px; height: 180px; }
+.ss-welcome-art > div { transform: scale(0.6716); transform-origin: 0 0; }
+.ss-trail { display: grid; gap: 16px; }
+.ss-badge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.ss-round { display: grid; gap: 18px; grid-template-areas: "head" "msg" "ctrl"; }
+
+@media (min-width: 900px) {
+  .ss-wrap { padding-inline: 40px; }
+  .ss-fill { min-height: 0; padding-top: 32px; }
+  .ss-desktop { display: flex !important; }
+  .ss-narrow-wide { max-width: 960px; }
+
+  .ss-home { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: start; gap: 32px; }
+  .ss-home > :first-child { grid-column: 1 / -1; }
+
+  .ss-welcome { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; column-gap: 64px; padding-block: 64px 48px; }
+  .ss-welcome-art { width: 400px; height: 400px; justify-self: center; grid-column: 2; grid-row: 1 / span 6; }
+  .ss-welcome-art > div { transform: scale(1.4925); }
+
+  .ss-trail { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .ss-badge-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+  .ss-round {
+    grid-template-columns: minmax(0, 1fr) 440px; grid-template-rows: auto 1fr;
+    grid-template-areas: "msg head" "msg ctrl"; column-gap: 48px; row-gap: 20px; align-items: start; padding-top: 12px;
+  }
+  .ss-round-msg { position: sticky; top: 96px; }
+}
 
 @keyframes ss-pop { 0% { transform: scale(0.6); opacity: 0 } 70% { transform: scale(1.08) } 100% { transform: scale(1); opacity: 1 } }
 @keyframes ss-rise { 0% { transform: translateY(8px); opacity: 0 } 100% { transform: translateY(0); opacity: 1 } }
