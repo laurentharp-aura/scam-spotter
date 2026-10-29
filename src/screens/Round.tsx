@@ -39,7 +39,7 @@ function RoundIntro({ game: { s, round, actions } }: { game: Game }) {
       </div>
       <div style={col(24, { flex: 1, justifyContent: 'center', animation: 'ss-rise .3s ease-out both' })}>
         <div style={col(14, { alignItems: 'center', textAlign: 'center' })}>
-          <div style={{ width: 88, height: 88, borderRadius: '50%', background: '#fff', color: C.ink, boxShadow: '0 0 0 10px rgba(42,95,252,0.18), 0 0 60px rgba(42,95,252,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={kind[1]} size={40} /></div>
+          <div style={{ width: 88, height: 88, borderRadius: '50%', background: C.blue, color: '#fff', boxShadow: '0 0 0 10px rgba(42,95,252,0.12), 0 12px 40px rgba(42,95,252,0.30)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={kind[1]} size={40} /></div>
           <span style={{ fontSize: 15, fontWeight: 500, letterSpacing: '0.06em', color: label }}>{demo ? 'PRACTICE ROUND' : roundLine(s)}</span>
           <span style={{ ...DISPLAY, fontSize: 46, lineHeight: 1.04, textWrap: 'balance', color: fg }}>{title}</span>
           <span style={{ fontSize: 20, lineHeight: 1.45, color: sub, textWrap: 'pretty', maxWidth: 440 }}>{body}</span>
@@ -244,10 +244,10 @@ function MessageRoundView({ game, round }: { game: Game; round: Round }) {
     <div className="ss-round">
       <div style={col(18, { gridArea: 'head' })}>
         <div style={{ display: 'inline-flex', alignSelf: 'flex-start', alignItems: 'center', gap: 10, padding: '6px 14px 6px 6px', borderRadius: 999, background: C.surface, border: `1px solid ${C.hair}` }}>
-          <span style={{ width: 28, height: 28, borderRadius: '50%', background: '#fff', color: C.ink, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={KINDS[round.kind][1]} size={15} /></span>
+          <span style={{ width: 28, height: 28, borderRadius: '50%', background: C.blue, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={KINDS[round.kind][1]} size={15} /></span>
           <span style={{ fontSize: 14, fontWeight: 600 }}>{s.cur === 0 ? 'Practice round' : `Level ${round.lvl} · ${LEVELS[round.lvl - 1][0]}`}</span>
           <span style={{ display: 'flex', gap: 4 }}>
-            {nums.map(i => <span key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: i === s.cur ? '#fff' : isDone(s, i) ? C.teal : C.locked }} />)}
+            {nums.map(i => <span key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: i === s.cur ? C.ink : isDone(s, i) ? C.teal : C.locked }} />)}
           </span>
         </div>
         {head}
@@ -307,9 +307,9 @@ function FlagsControls({ game: { s, actions }, round }: { game: Game; round: Rou
         <span style={{ fontSize: 17, fontWeight: 600, marginLeft: 4, flex: 1 }}>
           {counted ? `${foundBad} of ${badCount} found` : `${s.marked.length} marked`}
         </span>
-        {!demo && <button className="ss-outline" onClick={actions.useHint} style={{ minHeight: 44, padding: '0 18px', borderRadius: 999, border: '1.5px solid rgba(255,255,255,0.55)', background: 'none', fontSize: 16, fontWeight: 600, color: C.text, cursor: 'pointer' }}>Hint</button>}
+        {!demo && <button className="ss-outline" onClick={actions.useHint} style={{ minHeight: 44, padding: '0 18px', borderRadius: 999, border: `1.5px solid ${C.outline}`, background: '#fff', fontSize: 16, fontWeight: 600, color: C.text, cursor: 'pointer' }}>Hint</button>}
       </div>
-      {s.quip && <div style={{ background: C.surface2, border: `1px solid ${C.hair}`, color: '#fff', borderRadius: 18, padding: '14px 16px', fontSize: 18, lineHeight: 1.45, animation: 'ss-rise .25s ease-out' }}>{s.quip}</div>}
+      {s.quip && <div style={{ background: C.ink, color: '#fff', borderRadius: 18, padding: '14px 16px', fontSize: 18, lineHeight: 1.45, animation: 'ss-rise .25s ease-out' }}>{s.quip}</div>}
       {canContinue && <PrimaryButton size={19} shadow={false} onClick={actions.reveal} style={{ animation: 'ss-rise .25s ease-out' }}>See results</PrimaryButton>}
       {!demo && <TextButton onClick={actions.skipFlags}>Skip — show me the answer</TextButton>}
     </div>
@@ -334,7 +334,7 @@ function VerdictControls({ game: { s, actions } }: { game: Game }) {
         const guided = demo && id === 'scam', off = demo && id !== 'scam';
         return (
           <button key={id} className="ss-choice" onClick={() => actions.choose(id)} disabled={off} style={{
-            ...DISPLAY, minHeight: 'clamp(76px, 6vw, 96px)', borderRadius: 999, border: '2px solid transparent', background: '#fff', boxShadow: 'none',
+            ...DISPLAY, minHeight: 'clamp(76px, 6vw, 96px)', borderRadius: 999, border: `1.5px solid ${C.hair}`, background: '#fff', boxShadow: SHADOW,
             outline: guided ? '3px solid #FFA722' : 'none', outlineOffset: 3, opacity: off ? 0.45 : 1,
             fontSize: 24, cursor: off ? 'default' : 'pointer', color: C.ink, transition: 'transform .15s, box-shadow .15s',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,

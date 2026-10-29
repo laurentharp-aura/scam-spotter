@@ -11,7 +11,7 @@ export function LevelComplete({ game: { s, actions } }: { game: Game }) {
       <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 32, background: C.hero, border: `1px solid ${C.hair}` }}>
         <Glow at="top" />
         <div style={col(18, { position: 'relative', alignItems: 'center', textAlign: 'center', padding: '56px 28px 32px' })}>
-          <div style={{ animation: 'ss-pop .5s ease-out both', filter: 'drop-shadow(0 12px 40px rgba(0,0,0,0.5))' }}><Medallion b={b} size={168} core={104} icon={60} /></div>
+          <div style={{ animation: 'ss-pop .5s ease-out both', filter: 'drop-shadow(0 12px 32px rgba(25,47,112,0.18))' }}><Medallion b={b} size={168} core={104} icon={60} /></div>
           <Pill good>Badge earned · {b.name}</Pill>
           <h1 style={{ ...DISPLAY, margin: 0, fontSize: 40, lineHeight: 1.05, textWrap: 'balance' }}>{LEVELS[dl - 1][2]}</h1>
           <span style={line}>All {levelSize(dl)} rounds complete.{' '}{champ ? "You've earned all 6 badges." : `Next up: ${LEVELS[dl][0]} — ${LEVELS[dl][1].toLowerCase()}.`}</span>

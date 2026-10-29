@@ -8,14 +8,14 @@ import type { BadgeView } from './game/useGame';
  * - mockup ink (ink … border) for the light phone/email mockups, which stay white like real screens.
  */
 export const C = {
-  bg: '#0b1430', surface: '#13214d', surface2: '#1c2d60', text: '#ffffff', sub: '#bccaee', faint: '#8d9bc6', hair: 'rgba(173,196,255,0.16)',
-  link: '#a9c6ff', sky: '#a9c6ff', locked: '#3a4a80',
-  /** Navy hero cards, like the dark Aura app icon. */
-  hero: 'linear-gradient(150deg,#1d4fa8 0%,#142a6e 50%,#0e1c4f 100%)',
+  bg: '#eef3fc', surface: '#ffffff', surface2: '#edf1f7', text: '#0B132B', sub: '#4c5a70', faint: '#6c7c93', hair: 'rgba(11,19,43,0.08)',
+  link: '#2A5FFC', sky: '#2A5FFC', locked: '#cfd7e3', outline: 'rgba(11,19,43,0.22)', mark: '#0b1430',
+  /** Hero cards: white fading into Aura's light periwinkle. */
+  hero: 'linear-gradient(160deg,#ffffff 0%,#eef3ff 55%,#d9e5ff 100%)',
   ink: '#0B132B', muted: '#4c5a70', body: '#39465e', line: '#edf1f7', border: '#cfd7e3',
   blue: '#2A5FFC', navy: '#192f70', orange: '#FFA722', teal: '#25DAA7',
 };
-export const SHADOW = '0 1px 2px rgba(0,0,0,0.3),0 12px 32px rgba(0,0,0,0.35)';
+export const SHADOW = '0 1px 2px rgba(25,47,112,0.06),0 10px 30px rgba(25,47,112,0.10)';
 /** The light Aura app-icon gradient: periwinkle to white. */
 export const PASTEL = 'linear-gradient(135deg,#a9c6ff 0%,#cfdfff 50%,#f2f6ff 100%)';
 export const DISPLAY: CSSProperties = { fontFamily: "'Inter Tight','Inter',system-ui,sans-serif", letterSpacing: '-0.035em', fontWeight: 600 };
@@ -44,7 +44,7 @@ export function TextButton({ onClick, children, style }: BtnProps) {
 }
 
 export function Card({ children, style }: { children: ReactNode; style?: CSSProperties }) {
-  return <div style={{ background: C.surface, border: `1px solid ${C.hair}`, borderRadius: 24, ...style }}>{children}</div>;
+  return <div style={{ background: C.surface, border: `1px solid ${C.hair}`, borderRadius: 24, boxShadow: SHADOW, ...style }}>{children}</div>;
 }
 
 /** A soft blue bloom behind hero content. The parent needs position: relative + overflow: hidden. */
@@ -57,8 +57,8 @@ export function AuraMark({ size = 40 }: { size?: number }) {
   return (
     <span style={{ width: size, height: size, borderRadius: size * 0.28, background: PASTEL, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
       <svg width={size * 0.56} height={size * 0.56} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <rect x="6.5" y="2.5" width="11" height="2.4" fill={C.bg} />
-        <path d="M4.2 21.5 L12 7.6 L19.8 21.5" stroke={C.bg} strokeWidth="2.4" strokeLinejoin="miter" />
+        <rect x="6.5" y="2.5" width="11" height="2.4" fill={C.mark} />
+        <path d="M4.2 21.5 L12 7.6 L19.8 21.5" stroke={C.mark} strokeWidth="2.4" strokeLinejoin="miter" />
       </svg>
     </span>
   );
@@ -67,7 +67,7 @@ export function AuraMark({ size = 40 }: { size?: number }) {
 /** A word set in a white pill inside a headline, like aura.com's "your [identity] staying safe". */
 export function PillWord({ icon, children }: { icon?: 'Shield' | 'Search3'; children: ReactNode }) {
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.18em', background: '#fff', color: C.ink, borderRadius: 999, padding: '0.02em 0.32em 0.06em', verticalAlign: '0.04em', lineHeight: 1.1 }}>
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.18em', background: C.blue, color: '#fff', borderRadius: 999, padding: '0.02em 0.32em 0.06em', verticalAlign: '0.04em', lineHeight: 1.1 }}>
       {icon && <Icon name={icon} size={0} style={{ width: '0.72em', height: '0.72em' }} />}{children}
     </span>
   );
@@ -89,7 +89,7 @@ export function Pill({ good, children, style }: { good: boolean; children: React
   return (
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 14px', borderRadius: 999, fontSize: 15, fontWeight: 600,
-      background: good ? 'rgba(37,218,167,0.14)' : 'rgba(255,167,34,0.14)', color: good ? '#7ff0cf' : '#ffc56b', ...style,
+      background: good ? '#ebfaf6' : '#fff5e5', color: good ? '#22705a' : '#96600f', ...style,
     }}>
       <span style={{ width: 8, height: 8, borderRadius: '50%', background: good ? C.teal : C.orange }} />{children}
     </span>

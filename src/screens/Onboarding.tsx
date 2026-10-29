@@ -13,8 +13,8 @@ function Notice({ app, icon, iconBg, when, title, children, dark }: { app: strin
     <div style={{
       display: 'flex', gap: 12, padding: '14px 16px', borderRadius: 22, maxWidth: 380, width: '100%',
       background: dark ? 'rgba(19,33,77,0.78)' : 'rgba(255,255,255,0.94)', color: dark ? '#fff' : C.ink,
-      backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : 'transparent'}`,
-      boxShadow: '0 18px 40px rgba(0,0,0,0.35)', fontFamily: "-apple-system,'SF Pro Text',system-ui,sans-serif",
+      backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : C.hair}`,
+      boxShadow: '0 18px 40px rgba(25,47,112,0.18)', fontFamily: "-apple-system,'SF Pro Text',system-ui,sans-serif",
     }}>
       {icon ? <span style={{ width: 38, height: 38, borderRadius: 10, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name={icon} size={20} /></span> : <AuraMark size={38} />}
       <div style={col(2, { flex: 1, minWidth: 0 })}>
@@ -93,7 +93,7 @@ export function HowToPlay({ game: { s, actions } }: { game: Game }) {
       <span style={{ ...DISPLAY, fontSize: 40, lineHeight: 1.1, marginBottom: 8 }}>{s.name ? `Here's how it works, ${s.name}.` : "Here's how it works."}</span>
       {HOW_STEPS.map(hw => (
         <div key={hw.n} style={{ display: 'flex', gap: 16, alignItems: 'center', background: C.surface, border: `1px solid ${C.hair}`, borderRadius: 24, padding: 18 }}>
-          <span style={{ ...DISPLAY, width: 48, height: 48, borderRadius: '50%', background: '#fff', color: C.ink, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 22 }}>{hw.n}</span>
+          <span style={{ ...DISPLAY, width: 48, height: 48, borderRadius: '50%', background: C.blue, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 22 }}>{hw.n}</span>
           <div style={col(2)}>
             <span style={{ fontSize: 19, fontWeight: 600 }}>{hw.title}</span>
             <span style={{ fontSize: 16, color: C.sub, lineHeight: 1.4 }}>{hw.body}</span>

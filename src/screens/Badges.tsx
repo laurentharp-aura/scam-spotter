@@ -16,7 +16,7 @@ export function Badges({ game: { s, actions } }: { game: Game }) {
           {ob.earned && <Glow />}
           <div style={col(12, { position: 'relative', padding: '32px 22px', alignItems: 'center', textAlign: 'center' })}>
             <Medallion b={ob} size={120} core={74} icon={44} />
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 12px', borderRadius: 999, background: ob.earned ? 'rgba(37,218,167,0.18)' : 'rgba(255,255,255,0.12)', color: ob.earned ? '#97f0d7' : C.sub, fontSize: 14, fontWeight: 600, marginTop: 6 }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 12px', borderRadius: 999, background: ob.earned ? '#ebfaf6' : C.surface2, color: ob.earned ? '#22705a' : C.sub, fontSize: 14, fontWeight: 600, marginTop: 6 }}>
               {ob.earned ? 'Earned' : 'Locked'}
             </span>
             <span style={{ ...DISPLAY, fontSize: 32, lineHeight: 1.1 }}>{ob.name}</span>

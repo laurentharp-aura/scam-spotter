@@ -38,7 +38,7 @@ export default function App() {
 }
 
 function TopBar({ game: { s, actions } }: { game: Game }) {
-  const fg = C.text, bd = 'rgba(255,255,255,0.55)';
+  const fg = C.text, bd = C.outline;
   const backTo: Partial<Record<Screen, Screen>> = { help: s.prev || 'home', name: 'welcome', how: 'name' };
   const pill = { height: 48, borderRadius: 999, border: `1.5px solid ${bd}`, background: 'transparent', fontWeight: 600, color: fg, cursor: 'pointer' } as const;
   const onboarding = ['welcome', 'name', 'how'].includes(s.screen);
@@ -53,7 +53,7 @@ function TopBar({ game: { s, actions } }: { game: Game }) {
   );
   const brandBox = { display: 'flex', alignItems: 'center', gap: 10, background: 'none', border: 'none', padding: 0 } as const;
   return (
-    <header style={{ position: 'sticky', top: 'env(safe-area-inset-top, 0px)', zIndex: 5, background: 'rgba(11,20,48,0.78)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderBottom: `1px solid ${C.hair}` }}>
+    <header style={{ position: 'sticky', top: 'env(safe-area-inset-top, 0px)', zIndex: 5, background: 'rgba(238,243,252,0.85)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderBottom: `1px solid ${C.hair}` }}>
       <div className="ss-wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, paddingBlock: 12, minHeight: 72 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           {/* Phones show the brand only on home; desktop always shows it, and it links home once onboarded. */}

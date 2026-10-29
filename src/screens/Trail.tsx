@@ -33,7 +33,7 @@ export function Trail({ game: { s, actions } }: { game: Game }) {
                     <button key={i} className={pl ? 'ss-lift' : undefined} onClick={() => pl && actions.start(i)} disabled={!pl} aria-label={`Level ${lvl} round ${k + 1}`} style={{
                       width: 52, height: 52, borderRadius: '50%', border: `1.5px ${pl ? 'solid' : 'dashed'} ${dn || isNext ? 'transparent' : C.locked}`,
                       background: dn ? C.teal : isNext ? C.blue : C.surface2, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      cursor: pl ? 'pointer' : 'default', color: dn ? C.ink : C.text, fontSize: 19, fontWeight: 600,
+                      cursor: pl ? 'pointer' : 'default', color: isNext && !dn ? '#fff' : C.ink, fontSize: 19, fontWeight: 600,
                       boxShadow: isNext ? '0 0 0 6px rgba(42,95,252,0.25)' : 'none',
                     }}>
                       {dn ? <Icon name="Checkmark" size={22} /> : <span>{k + 1}</span>}
@@ -45,7 +45,7 @@ export function Trail({ game: { s, actions } }: { game: Game }) {
           );
         })}
       </div>
-      <button className="ss-outline" onClick={actions.resetAll} style={{ alignSelf: 'center', minHeight: 48, padding: '0 24px', border: '1.5px dashed #3a4a80', borderRadius: 999, background: 'none', fontSize: 16, fontWeight: 600, color: C.sub, cursor: 'pointer' }}>Start over as a new player</button>
+      <button className="ss-outline" onClick={actions.resetAll} style={{ alignSelf: 'center', minHeight: 48, padding: '0 24px', border: '1.5px dashed #a3aebf', borderRadius: 999, background: 'none', fontSize: 16, fontWeight: 600, color: C.sub, cursor: 'pointer' }}>Start over as a new player</button>
     </div>
   );
 }

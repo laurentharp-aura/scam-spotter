@@ -10,11 +10,11 @@ const HELP_STEPS = [
 export function Help() {
   return (
     <div data-screen-label="10 Immediate help" className="ss-narrow" style={col(16, { paddingBlock: '24px 48px' })}>
-      <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: '0.08em', color: '#ffc56b' }}>REAL HELP · NOT PART OF THE GAME</span>
+      <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: '0.08em', color: '#96600f' }}>REAL HELP · NOT PART OF THE GAME</span>
       <h1 style={{ ...DISPLAY, margin: 0, fontSize: 40, lineHeight: 1.1 }}>Let's take this one step at a time.</h1>
       {HELP_STEPS.map(hs => (
         <div key={hs.n} style={{ display: 'grid', gridTemplateColumns: '40px 1fr', gap: 14, padding: '16px 0', borderTop: `1px solid ${C.hair}` }}>
-          <span style={{ width: 40, height: 40, borderRadius: '50%', background: '#fff', color: C.ink, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 600 }}>{hs.n}</span>
+          <span style={{ width: 40, height: 40, borderRadius: '50%', background: '#ebf2ff', color: C.navy, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 600 }}>{hs.n}</span>
           <div style={col(4)}>
             <span style={{ fontSize: 20, fontWeight: 600 }}>{hs.title}</span>
             <span style={{ fontSize: 17, lineHeight: 1.5, color: C.sub }}>{hs.body}</span>

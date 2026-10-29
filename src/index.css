@@ -3,27 +3,27 @@
 @import './ds/tokens/typography.css';
 @import './ds/tokens/effects.css';
 
-:root { color-scheme: dark; }
-html, body { margin: 0; padding: 0; background: #0b1430 linear-gradient(180deg,#102257 0%,#0b1430 38%,#09112a 100%) fixed; color: #fff; -webkit-font-smoothing: antialiased; }
+:root { color-scheme: light; }
+html, body { margin: 0; padding: 0; background: #eef3fc linear-gradient(180deg,#dfe8ff 0%,#eef3fc 40%,#f6f8fd 100%) fixed; color: #0B132B; -webkit-font-smoothing: antialiased; }
 * { box-sizing: border-box; }
 button, input { font-family: inherit; }
 body { font-family: 'Inter', system-ui, sans-serif; }
-a { color: #8fb0ff; text-decoration: underline; }
+a { color: #2A5FFC; text-decoration: underline; }
 :focus-visible { outline: 3px solid #6699ff; outline-offset: 2px; }
-input::placeholder { color: #8d9bc6; }
+input::placeholder { color: #a3aebf; }
 
 .ss-press:active { transform: scale(0.98); }
 .ss-btn:not(:disabled):hover { filter: brightness(1.12); }
-.ss-choice:hover { transform: translateY(-1px); box-shadow: 0 0 0 3px rgba(143,176,255,0.45) !important; }
+.ss-choice:hover { transform: translateY(-1px); box-shadow: 0 0 0 3px rgba(42,95,252,0.35) !important; }
 .ss-tap:hover { box-shadow: 0 0 0 2px #b5cdff; }
-.ss-outline:hover { background: rgba(255,255,255,0.08) !important; }
+.ss-outline:hover { background: rgba(42,95,252,0.06) !important; }
 .ss-lift { transition: transform .2s var(--ease-standard), border-color .2s; }
 .ss-lift:hover { transform: translateY(-2px); }
 
 /* ---------------------------------------------------------------- blue glow
    A soft periwinkle bloom, like the light behind Aura's app icon. */
 .ss-glow { position: absolute; left: -15%; right: -15%; height: 120%; bottom: -65%; pointer-events: none; filter: blur(24px);
-  background: radial-gradient(closest-side, rgba(169,198,255,0.55) 0%, rgba(90,140,255,0.32) 40%, rgba(42,95,252,0.12) 70%, transparent 100%);
+  background: radial-gradient(closest-side, rgba(120,160,255,0.55) 0%, rgba(80,130,255,0.28) 40%, rgba(42,95,252,0.10) 70%, transparent 100%);
   animation: ss-breathe 9s ease-in-out infinite; }
 /* Bloom near the top, e.g. behind a badge. */
 .ss-glow-top { bottom: -20%; }
@@ -44,7 +44,7 @@ input::placeholder { color: #8d9bc6; }
 
 .ss-round { display: grid; gap: 18px; grid-template-areas: "head" "msg" "ctrl"; }
 /* The message sits on a navy stage with a soft blue glow, like aura.com's product cards. */
-.ss-stage { position: relative; overflow: hidden; border-radius: 32px; background: linear-gradient(160deg,#1a3f94 0%,#122a6b 55%,#0d1c4c 100%); border: 1px solid rgba(173,196,255,0.16); padding: 28px 14px 40px; }
+.ss-stage { position: relative; overflow: hidden; border-radius: 32px; background: linear-gradient(150deg,#a9c6ff 0%,#c4d7ff 50%,#e6eeff 100%); border: 1px solid rgba(11,19,43,0.06); padding: 28px 14px 40px; }
 .ss-stage .ss-glow { bottom: -70%; height: 110%; }
 .ss-stage-inner { position: relative; width: 100%; }
 .ss-mock { max-width: 460px; }

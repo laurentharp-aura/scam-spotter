@@ -27,7 +27,7 @@ export function Home({ game: { s, actions } }: { game: Game }) {
           <div style={col(16, { position: 'relative', padding: 'clamp(28px, 3.5vw, 56px)' })}>
             <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: '0.08em', color: C.sky }}>{allDone ? 'ALL ROUNDS COMPLETE' : isNew ? 'GET STARTED' : 'YOUR NEXT ROUND'}</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              {!allDone && <span style={{ width: 56, height: 56, borderRadius: '50%', background: '#fff', color: C.ink, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name={KINDS[nr.kind][1]} size={26} /></span>}
+              {!allDone && <span style={{ width: 56, height: 56, borderRadius: '50%', background: C.blue, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name={KINDS[nr.kind][1]} size={26} /></span>}
               <div style={col(4)}>
                 <span style={{ ...DISPLAY, fontSize: 'clamp(30px, 3.2vw, 52px)', lineHeight: 1.04 }}>{allDone ? 'Replay any round from the trail' : isNew ? "Let's start with a practice text" : LEVELS[nr.lvl - 1][3]}</span>
                 {!allDone && <span style={{ fontSize: 15, color: C.sub }}>Level {nr.lvl} · Round {roundNumber(nIdx)} of {levelSize(nr.lvl)}</span>}
@@ -58,7 +58,7 @@ export function Home({ game: { s, actions } }: { game: Game }) {
             <span style={{ ...DISPLAY, fontSize: 24 }}>Your badges</span>
             <span style={{ fontSize: 15, color: C.sub }}>Finish a level to earn its badge · {badges.filter(b => b.earned).length} of 6</span>
           </div>
-          <button className="ss-outline" onClick={() => actions.go('guide')} style={{ border: '1.5px solid rgba(255,255,255,0.55)', borderRadius: 999, background: 'none', padding: '0 16px', fontSize: 15, fontWeight: 600, color: C.text, cursor: 'pointer', minHeight: 40, whiteSpace: 'nowrap' }}>See all</button>
+          <button className="ss-outline" onClick={() => actions.go('guide')} style={{ border: `1.5px solid ${C.outline}`, borderRadius: 999, background: 'none', padding: '0 16px', fontSize: 15, fontWeight: 600, color: C.text, cursor: 'pointer', minHeight: 40, whiteSpace: 'nowrap' }}>See all</button>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '18px 8px', flex: 1, alignContent: 'space-evenly' }}>
           {badges.map((b, li) => (
