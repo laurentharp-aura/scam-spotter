@@ -1,9 +1,9 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { BADGES, KINDS, ROUNDS, isBad, type Round, type Part, type SectionKind } from '../data/content';
+import { BADGES, KINDS, LEVELS, ROUNDS, isBad, type Round, type Part, type SectionKind } from '../data/content';
 import { Icon, type IconName } from '../ds/Icon';
 import { settings } from '../game/settings';
 import { demoTarget, isDone, levelSize, roundNumber, roundsInLevel, subName, type Game, type GameState, type Mark } from '../game/useGame';
-import { C, Card, DISPLAY, PASTEL, Pill, PrimaryButton, SHADOW, TextButton, col, kicker } from '../ui';
+import { C, Card, DISPLAY, Glow, PASTEL, Pill, PrimaryButton, SHADOW, TextButton, col, kicker } from '../ui';
 
 export function RoundScreen({ game }: { game: Game }) {
   const { s, round } = game;
@@ -239,11 +239,26 @@ function MessageRoundView({ game, round }: { game: Game; round: Round }) {
   const inFlags = !s.revealed && s.phase === 'flags';
   const head = s.revealed ? <RevealHead game={game} /> : inFlags ? <FlagsHead game={game} round={round} /> : <VerdictHead game={game} />;
   const ctrl = s.revealed ? <RevealBody game={game} /> : inFlags ? <FlagsControls game={game} round={round} /> : <VerdictControls game={game} />;
+  const nums = roundsInLevel(round.lvl);
   return (
     <div className="ss-round">
-      <div style={{ gridArea: 'head' }}>{head}</div>
+      <div style={col(18, { gridArea: 'head' })}>
+        <div style={{ display: 'inline-flex', alignSelf: 'flex-start', alignItems: 'center', gap: 10, padding: '6px 14px 6px 6px', borderRadius: 999, background: C.surface, border: `1px solid ${C.hair}` }}>
+          <span style={{ width: 28, height: 28, borderRadius: '50%', background: '#fff', color: C.ink, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={KINDS[round.kind][1]} size={15} /></span>
+          <span style={{ fontSize: 14, fontWeight: 600 }}>{s.cur === 0 ? 'Practice round' : `Level ${round.lvl} · ${LEVELS[round.lvl - 1][0]}`}</span>
+          <span style={{ display: 'flex', gap: 4 }}>
+            {nums.map(i => <span key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: i === s.cur ? '#fff' : isDone(s, i) ? C.teal : '#45454b' }} />)}
+          </span>
+        </div>
+        {head}
+      </div>
       <div className="ss-round-msg" style={{ gridArea: 'msg' }}>
-        {round.kind === 'text' ? <TextMessage game={game} round={round} /> : round.kind === 'voicemail' ? <VoicemailCard game={game} round={round} /> : <MessageCard game={game} round={round} />}
+        <div className="ss-stage">
+          <Glow />
+          <div style={{ position: 'relative', width: '100%' }}>
+            {round.kind === 'text' ? <TextMessage game={game} round={round} /> : round.kind === 'voicemail' ? <VoicemailCard game={game} round={round} /> : <MessageCard game={game} round={round} />}
+          </div>
+        </div>
       </div>
       <div style={{ gridArea: 'ctrl' }}>{ctrl}</div>
     </div>
@@ -322,7 +337,13 @@ function VerdictControls({ game: { s, actions } }: { game: Game }) {
             ...DISPLAY, minHeight: 76, borderRadius: 999, border: '2px solid transparent', background: '#fff', boxShadow: 'none',
             outline: guided ? '3px solid #FFA722' : 'none', outlineOffset: 3, opacity: off ? 0.45 : 1,
             fontSize: 24, cursor: off ? 'default' : 'pointer', color: C.ink, transition: 'transform .15s, box-shadow .15s',
-          }}>{id === 'legit' ? 'Real' : 'Scam'}</button>
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+          }}>
+            <span style={{ width: 32, height: 32, borderRadius: '50%', background: id === 'legit' ? C.teal : C.orange, color: C.ink, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Icon name={id === 'legit' ? 'Checkmark' : 'Exclamation'} size={18} />
+            </span>
+            {id === 'legit' ? 'Real' : 'Scam'}
+          </button>
         );
       })}
     </div>

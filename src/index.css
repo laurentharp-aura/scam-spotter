@@ -43,6 +43,9 @@ input::placeholder { color: #8a8a94; }
 .ss-badge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
 .ss-round { display: grid; gap: 18px; grid-template-areas: "head" "msg" "ctrl"; }
+/* The message sits on a dark stage with the Solstice glow, like aura.com's product cards. */
+.ss-stage { position: relative; overflow: hidden; border-radius: 32px; background: #0a0a0b; border: 1px solid rgba(255,255,255,0.10); padding: 28px 14px 40px; }
+.ss-stage .ss-glow { bottom: -70%; height: 110%; }
 
 @media (min-width: 900px) {
   .ss-wrap { padding-inline: 40px; }
@@ -64,6 +67,7 @@ input::placeholder { color: #8a8a94; }
     grid-template-areas: "msg head" "msg ctrl"; column-gap: 48px; row-gap: 20px; align-items: start; padding-top: 12px;
   }
   .ss-round-msg { position: sticky; top: 96px; }
+  .ss-stage { padding: 56px 40px 72px; }
 }
 
 @keyframes ss-pop { 0% { transform: scale(0.6); opacity: 0 } 70% { transform: scale(1.08) } 100% { transform: scale(1); opacity: 1 } }
