@@ -1,7 +1,13 @@
-import { BADGES, LEVELS, ROUNDS } from '../data/content';
+import { BADGES, KINDS, LEVELS, ROUNDS, type Kind } from '../data/content';
 import { Icon } from '../ds/Icon';
-import { badgeView, isDone, nextIdx, roundsInLevel, type Game } from '../game/useGame';
+import { badgeView, isDone, levelSize, nextIdx, roundNumber, roundsInLevel, type Game } from '../game/useGame';
 import { C, HERO, Medallion, SHADOW, col } from '../ui';
+
+/** What the next round is, by type, without giving the message away. */
+const THEME: Record<Kind, string> = {
+  text: "Let's review some texts", email: "Let's review some emails", dm: "Let's review some messages",
+  social: "Let's review some social posts", listing: "Let's review some Marketplace listings", call: "Let's practice a phone call",
+};
 
 export function Home({ game: { s, actions } }: { game: Game }) {
   const nIdx = nextIdx(s), allDone = nIdx >= ROUNDS.length;
@@ -22,7 +28,13 @@ export function Home({ game: { s, actions } }: { game: Game }) {
       <div style={col(20)}>
         <div style={col(14, { background: HERO, color: '#fff', borderRadius: 28, boxShadow: SHADOW, padding: 28 })}>
           <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: '0.08em', color: '#B79CFF' }}>{allDone ? 'ALL ROUNDS COMPLETE' : isNew ? 'GET STARTED' : 'YOUR NEXT ROUND'}</span>
-          <span style={{ fontSize: 30, fontWeight: 600, lineHeight: 1.15, textWrap: 'balance' }}>{allDone ? 'Replay any round from the trail' : nr.teaser}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            {!allDone && <span style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name={KINDS[nr.kind][1]} size={24} /></span>}
+            <div style={col(2)}>
+              <span style={{ fontSize: 24, fontWeight: 600, lineHeight: 1.2 }}>{allDone ? 'Replay any round from the trail' : isNew ? "Let's start with a practice text" : THEME[nr.kind]}</span>
+              {!allDone && <span style={{ fontSize: 15, color: '#cfe0ff' }}>Level {nr.lvl} · Round {roundNumber(nIdx)} of {levelSize(nr.lvl)}</span>}
+            </div>
+          </div>
           <button className="ss-press ss-btn" onClick={actions.playNext} style={{ marginTop: 8, minHeight: 60, maxWidth: 360, borderRadius: 999, border: 'none', background: '#fff', color: C.navy, fontSize: 20, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
             <Icon name="Play" size={22} />{allDone ? 'Open the trail' : nr.kind === 'call' ? 'Answer the call' : isNew ? 'Start playing' : 'Start round'}
           </button>
