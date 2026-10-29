@@ -103,7 +103,7 @@ export const ROUNDS: Round[] = [
     lesson: "Type it in where you just signed in. If a code shows up when you didn't sign in, don't share it and change your password." },
   // ---- Level 3 · Emails
   { id: 'walmart-prize', lvl: 3, kind: 'email', teaser: "An email from Walmart saying you won $500. Claim now!", answer: 'scam',
-    sections: [{ s: 'head', p: ['Walmart Rewards ', L('<winner@walmart-prize-claims.biz>', 0)] }, { s: 'subject', p: [L("You've WON a $500 Walmart gift card!!", 1)] },
+    sections: [{ s: 'head', p: ['Walmart Rewards ', L('<winner@walmart-prize-claims.biz>', 0)] }, { s: 'meta', p: ['Today at 8:12 AM'] }, { s: 'subject', p: [L("You've WON a $500 Walmart gift card!!", 1)] },
       { s: 'body', p: ['Congratulations! Your email was picked as this month\'s winner.\n\n', L('Claim within 12 hours', 2), ' or the prize goes to someone else. We just need ', L('a card number to cover $4.95 shipping', 3), '.\n\n', L('[ Claim my prize ]', 4, { link: 1 })] }],
     clues: [
       { label: 'Strange sender', why: 'Walmart emails come from walmart.com — not this.', quip: 'The address ends in ".biz" and adds extra words. Walmart emails come from walmart.com.' },
@@ -114,7 +114,7 @@ export const ROUNDS: Round[] = [
     lesson: "Don't click. If you didn't enter, just delete it.",
     species: { name: 'The Prize Patrol', icon: 'Gift', call: '"Congratulations! Claim your reward today."', shoo: "If you didn't enter, you didn't win." } },
   { id: 'chase-signin-real', lvl: 3, kind: 'email', teaser: "An email from Chase about a new sign-in", answer: 'legit',
-    sections: [{ s: 'head', p: ['Chase ', L('<no.reply.alerts@chase.com>', 0)] }, { s: 'subject', p: ['New sign-in on your account'] },
+    sections: [{ s: 'head', p: ['Chase ', L('<no.reply.alerts@chase.com>', 0)] }, { s: 'meta', p: ['Oct 18 at 7:30 PM'] }, { s: 'subject', p: ['New sign-in on your account'] },
       { s: 'body', p: [L('Hi {name},', 1), '\n\nWe noticed a ', L('sign-in from a new device', 2), ' on Oct 18. If this was you, no action is needed.\n\nIf not, ', L('open the Chase Mobile app or call the number on the back of your card', 3), '.'] }],
     clues: [
       { bad: false, label: 'Correct address', why: 'chase.com, spelled right, no extra words.' },
@@ -123,7 +123,7 @@ export const ROUNDS: Round[] = [
       { bad: false, label: 'Sends you to the app', why: 'No link — it points to channels you already trust.' }],
     lesson: 'Nothing to click. If you\'re unsure, check in the app yourself.' },
   { id: 'chase-evil-twin', lvl: 3, kind: 'email', teaser: "Another Chase email about an unusual sign-in", answer: 'scam',
-    sections: [{ s: 'head', p: ['Chase ', L('<security@chase-alerts-secure.com>', 0)] }, { s: 'subject', p: ['URGENT: Unusual sign-in detected'] },
+    sections: [{ s: 'head', p: ['Chase ', L('<security@chase-alerts-secure.com>', 0)] }, { s: 'meta', p: ['Today at 6:02 AM'] }, { s: 'subject', p: ['URGENT: Unusual sign-in detected'] },
       { s: 'body', p: ['Dear customer,\n\nWe detected unusual activity. ', L('Confirm your identity within 2 hours', 1), ' to avoid suspension.\n\n', L('[ Verify account ]', 2, { link: 1 }), '\n\nYou will be asked for ', L('your card number and PIN', 3), '.'] }],
     clues: [
       { label: 'Extra word in the address', why: '"chase-alerts-secure.com" isn\'t chase.com.' },
@@ -186,7 +186,7 @@ export const ROUNDS: Round[] = [
       { bad: false, label: 'No pressure', why: 'No countdown, no "only 3 left", no payment by gift card.' }],
     lesson: 'Fine to shop, but go to target.com or the Target app yourself rather than tapping ads when you can.' },
   { id: 'mower-listing', lvl: 5, kind: 'listing', teaser: "A $150 riding mower on Facebook Marketplace", answer: 'scam',
-    sections: [{ s: 'head', p: ['Riding lawn mower · ', L('$150', 0)] }, { s: 'meta', p: ['Facebook Marketplace · Listed 1 hour ago'] },
+    sections: [{ s: 'head', p: ['Riding lawn mower · ', L('$150', 0)] }, { s: 'meta', p: ['Listed 1 hour ago · Chicago, IL'] },
       { s: 'body', p: ['Barely used 2023 model. ', L('Moving overseas, must sell today.', 1), ' ', L("Can't meet in person", 2), ' — ', L('send a $50 deposit by Zelle', 3), " to hold it and I'll ship it."] }],
     clues: [
       { label: 'Price too good', why: 'A $2,000 mower for $150? That\'s the bait.' },
