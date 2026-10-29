@@ -1,6 +1,7 @@
 import { BADGES, KINDS, LEVELS, ROUNDS } from '../data/content';
 import { Icon } from '../ds/Icon';
 import { badgeView, isDone, levelSize, nextIdx, roundNumber, roundsInLevel, type Game } from '../game/useGame';
+import { StatsBand } from './StatsBand';
 import { C, DISPLAY, Glow, Medallion, PASTEL, col } from '../ui';
 
 export function Home({ game: { s, actions } }: { game: Game }) {
@@ -69,6 +70,7 @@ export function Home({ game: { s, actions } }: { game: Game }) {
           ))}
         </div>
       </div>
+      <div className="ss-span"><StatsBand /></div>
     </div>
   );
 }

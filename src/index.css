@@ -40,6 +40,8 @@ input::placeholder { color: #a3aebf; }
 .ss-welcome { display: grid; gap: 36px; padding: 32px 22px 36px; }
 .ss-notices { display: flex; flex-direction: column; gap: 12px; }
 .ss-trail { display: grid; gap: 16px; }
+.ss-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.ss-span { grid-column: 1 / -1; }
 .ss-badge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
 .ss-round { display: grid; gap: 18px; grid-template-areas: "head" "msg" "ctrl"; }
@@ -58,7 +60,7 @@ input::placeholder { color: #a3aebf; }
   .ss-home { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: start; gap: 32px; }
   .ss-home > :first-child { grid-column: 1 / -1; }
   /* Fill the screen height: the hero card and badges stretch. */
-  .ss-home { grid-template-rows: auto 1fr; min-height: calc(100vh - 72px); align-items: stretch; }
+  .ss-home { grid-template-rows: auto minmax(calc(100vh - 340px), 1fr) auto; align-items: stretch; }
   .ss-home-hero { flex: 1; }
 
   .ss-welcome { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; column-gap: 56px; padding: 72px 64px 88px; }

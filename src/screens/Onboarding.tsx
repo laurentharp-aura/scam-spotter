@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { ROUNDS } from '../data/content';
 import { Icon, type IconName } from '../ds/Icon';
 import type { Game } from '../game/useGame';
+import { StatsBand } from './StatsBand';
 import { AuraMark, C, DISPLAY, Glow, PillWord, PrimaryButton, TextButton, col } from '../ui';
 
 const screen = (gap: number) => col(gap, { paddingBlock: '8px 40px' });
@@ -61,6 +62,7 @@ export function Welcome({ game: { actions } }: { game: Game }) {
           </div>
         </div>
       </div>
+      <div style={{ marginTop: 20 }}><StatsBand /></div>
     </div>
   );
 }

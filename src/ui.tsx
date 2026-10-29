@@ -4,7 +4,7 @@ import type { BadgeView } from './game/useGame';
 
 /**
  * Two palettes:
- * - page colours (bg … hair) for the dark, aura.com-style app chrome;
+ * - page colours (bg … hair) for the light, Aura-blue app chrome;
  * - mockup ink (ink … border) for the light phone/email mockups, which stay white like real screens.
  */
 export const C = {
