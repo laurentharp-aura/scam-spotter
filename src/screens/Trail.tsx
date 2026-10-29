@@ -21,14 +21,14 @@ export function Trail({ game: { s, actions } }: { game: Game }) {
               border: `2px solid ${current ? 'transparent' : doneAll ? '#bbf2e2' : C.border}`,
               boxShadow: current ? SHADOW : 'none',
             })}>
-              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              <button onClick={() => actions.playLevel(lvl)} aria-label={`Play level ${lvl}: ${title}`} style={{ display: 'flex', gap: 12, alignItems: 'center', border: 'none', background: 'none', padding: 0, textAlign: 'left', color: C.ink, cursor: 'pointer' }}>
                 {(() => { const b = badgeView(s, li); return <div style={{ opacity: b.op }}><Medallion b={b} size={48} core={30} icon={18} /></div>; })()}
                 <div style={col(2)}>
                   <span style={{ fontSize: 13, fontWeight: 500, letterSpacing: '0.08em', color: C.body }}>LEVEL {lvl}</span>
                   <span style={{ fontSize: 22, fontWeight: 600, lineHeight: 1.1 }}>{title}</span>
                   <span style={{ fontSize: 16, color: C.body }}>{skill}</span>
                 </div>
-              </div>
+              </button>
               <div style={{ display: 'flex', gap: 10 }}>
                 {idxs.map((i, k) => {
                   const dn = isDone(s, i), isNext = i === nIdx;
