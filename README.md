@@ -28,6 +28,7 @@ The prototype's Tweaks panel is available as URL params:
 
 - `?textScale=1.15` or `?textScale=1.3` enlarges the whole app.
 - `?outlineTappables=1` dash-outlines every tappable phrase.
+- `?new=1` starts as a brand-new player (clears saved progress), handy for demos.
 
 "Start over as a new player", at the bottom of the trail, resets progress.
 

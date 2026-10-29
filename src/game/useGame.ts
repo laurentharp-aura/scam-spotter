@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { BADGES, ROUNDS, isBad } from '../data/content';
+import { settings } from './settings';
 
 export type Screen = 'welcome' | 'why' | 'name' | 'how' | 'home' | 'map' | 'round' | 'complete' | 'guide' | 'help';
 export type Phase = 'verdict' | 'flags';
@@ -26,7 +27,14 @@ const freshRound = {
 
 function initialState(): GameState {
   let saved: Partial<GameState> = {};
-  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { /* private mode etc. */ }
+  try {
+    if (settings.freshStart) {
+      localStorage.removeItem(KEY);
+      // Drop ?new=1 so a later refresh keeps the new player's progress.
+      history.replaceState(null, '', window.location.pathname + window.location.hash);
+    }
+    saved = JSON.parse(localStorage.getItem(KEY) || '{}');
+  } catch { /* private mode etc. */ }
   const onboarded = !!saved.onboarded;
   return {
     screen: onboarded ? 'home' : 'welcome', prev: 'home',
