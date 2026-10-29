@@ -2,7 +2,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import { BADGES, KINDS, ROUNDS, isBad, type CallRound, type MessageRound, type Part, type SectionKind } from '../data/content';
 import { Icon, type IconName } from '../ds/Icon';
 import { settings } from '../game/settings';
-import { demoTarget, isDone, levelSize, roundNumber, subName, type Game, type GameState, type Mark } from '../game/useGame';
+import { demoTarget, isDone, levelSize, roundNumber, roundsInLevel, subName, type Game, type GameState, type Mark } from '../game/useGame';
 import { C, Card, Pill, PrimaryButton, SHADOW, TextButton, col, kicker } from '../ui';
 
 export function RoundScreen({ game, dark }: { game: Game; dark: boolean }) {
@@ -387,41 +387,41 @@ function RevealBody({ game: { s, round, actions } }: { game: Game }) {
   const o = outcome(s);
   const size = levelSize(round.lvl);
   const lvlLeft = ROUNDS.filter((rd, i) => rd.lvl === round.lvl && !isDone(s, i)).length;
-  const [bName, bIcon, , bFill] = BADGES[round.lvl - 1];
+  const bName = BADGES[round.lvl - 1][0];
   const say = round.kind === 'call' ? round.say : undefined;
   const lastInLevel = !(s.cur + 1 < ROUNDS.length && ROUNDS[s.cur + 1].lvl === round.lvl);
+  const progress = lvlLeft ? `${lvlLeft} more to earn ${bName.startsWith('The ') ? '' : 'the '}${bName} badge` : `${bName} badge unlocked`;
   return (
-    <div style={col(18)}>
+    <div style={col(16)}>
       <Card style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <span style={{ padding: '14px 16px 6px', fontSize: 14, fontWeight: 500, letterSpacing: '0.06em', color: C.body }}>{o.rowsTitle}</span>
+        <span style={{ padding: '14px 16px 4px', fontSize: 13, fontWeight: 500, letterSpacing: '0.06em', color: C.body }}>{o.rowsTitle}</span>
         {o.rows.map(te => (
-          <div key={te.label} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '12px 16px', borderTop: `1px solid ${C.line}` }}>
-            <span style={{ width: 30, height: 30, borderRadius: '50%', background: te.dot, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name={te.icon} size={16} /></span>
-            <div style={col(2)}>
-              <span style={{ fontSize: 18, fontWeight: 600 }}>{te.label}</span>
-              <span style={{ fontSize: 16, color: C.body, lineHeight: 1.4 }}>{te.why}</span>
+          <div key={te.label} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '10px 16px' }}>
+            <span style={{ width: 24, height: 24, marginTop: 1, borderRadius: '50%', background: te.dot, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name={te.icon} size={14} /></span>
+            <div style={col(1)}>
+              <span style={{ fontSize: 17, fontWeight: 600 }}>{te.label}</span>
+              <span style={{ fontSize: 15, color: C.body, lineHeight: 1.4 }}>{te.why}</span>
             </div>
           </div>
         ))}
+        <span style={{ height: 6 }} />
       </Card>
-      <div style={col(12, { background: C.blue, color: '#fff', borderRadius: 24, boxShadow: SHADOW, padding: 20 })}>
-        <span style={kicker(13, '#cfe0ff')}>BEST MOVE</span>
-        <span style={{ fontSize: 22, fontWeight: 600, lineHeight: 1.2 }}>{round.lesson}</span>
+      <div style={col(8, { background: '#ebf2ff', color: C.navy, borderRadius: 20, padding: '16px 18px' })}>
+        <span style={kicker(13, C.blue)}>WHAT TO DO</span>
+        <span style={{ fontSize: 18, fontWeight: 600, lineHeight: 1.35, color: C.ink }}>{round.lesson}</span>
         {say && (
-          <div style={{ background: '#fff', color: C.ink, borderRadius: '16px 16px 16px 4px', padding: '14px 16px', fontSize: 18, lineHeight: 1.4, fontWeight: 600 }}>
-            <span style={{ display: 'block', fontSize: 13, fontWeight: 500, color: C.muted, marginBottom: 4 }}>WHAT TO SAY</span>{say}
+          <div style={{ background: '#fff', color: C.ink, borderRadius: '14px 14px 14px 4px', padding: '10px 14px', fontSize: 17, lineHeight: 1.4, fontWeight: 600, marginTop: 4 }}>
+            <span style={{ display: 'block', fontSize: 12, fontWeight: 500, letterSpacing: '0.06em', color: C.muted, marginBottom: 2 }}>WHAT TO SAY</span>{say}
           </div>
         )}
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14, background: '#fff', borderRadius: 20, boxShadow: SHADOW, padding: '14px 16px' }}>
-        <span style={{ width: 48, height: 48, borderRadius: '50%', background: bFill, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name={bIcon} size={22} /></span>
-        <div style={col(2, { flex: 1 })}>
-          <span style={{ fontSize: 17, fontWeight: 600, lineHeight: 1.3 }}>Round {roundNumber(s.cur)} of {size} complete</span>
-          <span style={{ fontSize: 15, color: C.muted }}>{lvlLeft ? `${lvlLeft} more to earn ${bName.startsWith('The ') ? '' : 'the '}${bName} badge` : `${bName} badge unlocked`}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 4 }}>
+        <div style={{ display: 'flex', gap: 5 }}>
+          {roundsInLevel(round.lvl).map(i => <span key={i} style={{ width: 10, height: 10, borderRadius: '50%', background: isDone(s, i) ? C.teal : '#dde5ef' }} />)}
         </div>
+        <span style={{ fontSize: 15, color: C.muted }}>Round {roundNumber(s.cur)} of {size} · {progress}</span>
       </div>
       <PrimaryButton shadow={false} onClick={actions.next}>{lastInLevel ? 'Finish level' : 'Next round'}</PrimaryButton>
-      <TextButton onClick={actions.replay}>Play this round again</TextButton>
     </div>
   );
 }
