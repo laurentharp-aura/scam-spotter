@@ -38,6 +38,8 @@ export type Round = {
   sections: Section[]; clues: Clue[]; lesson: string; species?: Species;
   /** What the player knows that the message itself doesn't show, e.g. "You just signed in". */
   context?: string;
+  /** Optional photo (post/listing) and sender avatar, as paths under public/images/. */
+  image?: string; avatar?: string;
 };
 
 const L = (t: string, c: number, x?: { link: 1 }): Flag => ({ t, c, ...(x ? { link: true } : {}) });
@@ -163,7 +165,7 @@ export const ROUNDS: Round[] = [
     lesson: "Never send money to someone you haven't met in person. Talk to someone you trust.",
     species: { name: 'The Sweetheart', icon: 'Heart', call: '"I just need help with the ticket."', shoo: "Never send money to someone you haven't met." } },
   // ---- Level 5 · Ads
-  { id: 'celebrity-ad', lvl: 5, kind: 'social', teaser: "A Facebook ad promising $9,400 in one week", answer: 'scam',
+  { id: 'celebrity-ad', lvl: 5, kind: 'social', image: 'crypto-ad.webp', avatar: 'marco-bellini.jpg', teaser: "A Facebook ad promising $9,400 in one week", answer: 'scam',
     sections: [{ s: 'head', p: [L('Chef Marco Bellini', 3)] }, { s: 'meta', p: ['Facebook · Sponsored'] },
       { s: 'body', p: [L('I turned $250 into $9,400 in one week', 0), ' with this app. ', L('Guaranteed returns', 1), ', no risk! ', L('Only 20 spots left.', 2), '\n\nbellini-crypto-secrets.io'] },
       { s: 'foot', p: [L("312 comments · \"It works!!\" \"Thanks Chef!\" \"Made $3k already\"", 4)] }],
@@ -175,7 +177,7 @@ export const ROUNDS: Round[] = [
       { label: 'Gushing comments', why: 'Fake accounts post these by the hundreds.' }],
     lesson: 'Scroll past. Report the ad. Real experts don\'t promise guaranteed money.',
     species: { name: 'The Celebrity Tip', icon: 'Chart', call: '"I turned $250 into $9,400!"', shoo: 'Guaranteed returns are a guaranteed scam.' } },
-  { id: 'target-ad', lvl: 5, kind: 'social', teaser: "A sponsored Facebook post from Target about fall deals", answer: 'legit',
+  { id: 'target-ad', lvl: 5, kind: 'social', image: 'target-bedding.webp', teaser: "A sponsored Facebook post from Target about fall deals", answer: 'legit',
     sections: [{ s: 'head', p: [L('Target ✓', 0)] }, { s: 'meta', p: ['Facebook · Sponsored'] },
       { s: 'body', p: ['Fall home deals are here. ', L('Save up to 30% on throw blankets and pillows', 1), ' through Saturday.\n\n', L('target.com', 2, { link: 1 })] },
       { s: 'foot', p: [L('Shop now · Sold and shipped by Target', 3)] }],
@@ -185,7 +187,7 @@ export const ROUNDS: Round[] = [
       { bad: false, label: 'Links to target.com', why: "The link goes to Target's own site." },
       { bad: false, label: 'No pressure', why: 'No countdown, no "only 3 left", no payment by gift card.' }],
     lesson: 'Fine to shop, but go to target.com or the Target app yourself rather than tapping ads when you can.' },
-  { id: 'mower-listing', lvl: 5, kind: 'listing', teaser: "A $150 riding mower on Facebook Marketplace", answer: 'scam',
+  { id: 'mower-listing', lvl: 5, kind: 'listing', image: 'mower.jpg', teaser: "A $150 riding mower on Facebook Marketplace", answer: 'scam',
     sections: [{ s: 'head', p: ['Riding lawn mower · ', L('$150', 0)] }, { s: 'meta', p: ['Listed 1 hour ago · Chicago, IL'] },
       { s: 'body', p: ['Barely used 2023 model. ', L('Moving overseas, must sell today.', 1), ' ', L("Can't meet in person", 2), ' — ', L('send a $50 deposit by Zelle', 3), " to hold it and I'll ship it."] }],
     clues: [

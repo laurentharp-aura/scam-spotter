@@ -44,10 +44,10 @@ function TopBar({ game: { s, actions } }: { game: Game }) {
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, padding: '12px 16px', position: 'sticky', top: 'env(safe-area-inset-top, 0px)', zIndex: 5, background: C.page, minHeight: 72 }}>
       {s.screen === 'home' && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: C.blue, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name="Shield" size={22} /></div>
-          <span style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
+          <img src={`${import.meta.env.BASE_URL}images/aura-app-icon.png`} alt="" width={42} height={42} style={{ display: 'block' }} />
+          <span style={{ display: 'flex', flexDirection: 'column', gap: 3, lineHeight: 1.1 }}>
             <span style={{ fontSize: 20, fontWeight: 600 }}>Scam Spotter</span>
-            <span style={{ fontSize: 13, color: C.faint }}>by Aura</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.faint }}>by <img src={`${import.meta.env.BASE_URL}images/aura-logo.svg`} alt="Aura" height={10} style={{ display: 'block', opacity: 0.7 }} /></span>
           </span>
         </div>
       )}

@@ -116,6 +116,11 @@ function TextMessage({ game, round }: { game: Game; round: Round }) {
 const plain = (parts: Part[]) => parts.filter((p): p is string => typeof p === 'string').join('').replace(/[\s·]+$/, '').trim();
 const flags = (parts: Part[]) => parts.filter(p => typeof p !== 'string');
 const initials = (name: string) => name.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+/** Images live in public/images/; prefix with the site's base path (e.g. /scam-spotter/ on GitHub Pages). */
+const img = (file: string) => `${import.meta.env.BASE_URL}images/${file}`;
+const Avatar = ({ round, size, icon }: { round: Round; size: number; icon: 'User' | 'Cash' }) => round.avatar
+  ? <img src={img(round.avatar)} alt="" style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+  : <span style={{ width: size, height: size, borderRadius: '50%', background: 'linear-gradient(180deg,#a5a9b1,#868a92)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name={icon} size={size / 2} /></span>;
 const frame: CSSProperties = { background: '#fff', borderRadius: 28, boxShadow: SHADOW, overflow: 'hidden', color: '#000', fontFamily: FONT };
 
 /** Small white glyphs for the mockups' round buttons (not in the DS icon set). */
@@ -205,7 +210,7 @@ function MessengerMock({ game, round }: { game: Game; round: Round }) {
     <div style={frame}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderBottom: '1px solid #e5e5ea' }}>
         <span style={{ color: fb, display: 'flex' }}><Icon name="ChevronLeft" size={24} /></span>
-        <span style={{ width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(180deg,#a5a9b1,#868a92)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name="User" size={20} /></span>
+        <Avatar round={round} size={38} icon="User" />
         <div style={col(1, { minWidth: 0 })}>
           <span style={{ fontSize: 16, fontWeight: 700, lineHeight: 1.6 }}><Pieces list={pieces(secOf(round, 'head'), 'h', true, game.s)} game={game} round={round} im={false} head /></span>
           <span style={{ fontSize: 13, color: '#65676b', lineHeight: 1.6 }}><Pieces list={pieces(secOf(round, 'meta'), 'm', false, game.s)} game={game} round={round} im={false} /></span>
@@ -237,7 +242,7 @@ function FacebookMock({ game, round }: { game: Game; round: Round }) {
         <span style={{ width: 34, height: 34, borderRadius: '50%', background: '#fff', color: fbBlue, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name="Chat" size={18} /></span>
       </div>
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '12px 14px 8px' }}>
-        <span style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(180deg,#a5a9b1,#868a92)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name={listing ? 'Cash' : 'User'} size={20} /></span>
+        <Avatar round={round} size={40} icon={listing ? 'Cash' : 'User'} />
         <div style={col(0, { minWidth: 0 })}>
           <span style={{ fontSize: 16, fontWeight: 700, lineHeight: 1.6 }}>
             {listing ? 'Marketplace' : <Pieces list={pieces(head, 'h', true, s)} game={game} round={round} im={false} head />}
@@ -250,8 +255,9 @@ function FacebookMock({ game, round }: { game: Game; round: Round }) {
           <Pieces list={pieces(secOf(round, 'body'), 'b', true, s)} game={game} round={round} im={false} />
         </div>
       )}
-      {/* Stand-in for the post photo. */}
-      <div style={{ height: 180, background: 'linear-gradient(160deg,#e9edf3 0%,#cfd7e3 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9aa5b8' }}><Icon name={KINDS[round.kind][1]} size={56} /></div>
+      {round.image
+        ? <img src={img(round.image)} alt="" style={{ display: 'block', width: '100%', maxHeight: 320, objectFit: 'cover' }} />
+        : <div style={{ height: 180, background: 'linear-gradient(160deg,#e9edf3 0%,#cfd7e3 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9aa5b8' }}><Icon name={KINDS[round.kind][1]} size={56} /></div>}
       {listing ? (
         <div style={col(4, { background: '#f0f2f5', padding: '12px 14px 14px' })}>
           <span style={{ fontSize: 17, fontWeight: 700 }}>{plain(head)}</span>
