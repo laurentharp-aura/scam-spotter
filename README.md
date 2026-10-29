@@ -16,9 +16,7 @@ npm run build     # typecheck + production build to dist/
 |---|---|
 | `src/data/content.ts` | 18 rounds across 6 themed levels (scam texts, fraud texts, emails, messages, ads, voicemails), 3 per level with real and fake mixed, plus the level and badge definitions. Each round has a stable `id`, which is what saved progress refers to. |
 | `src/game/useGame.ts` | Game state, persistence (`localStorage`, key `scamSpotter.progress.v2`), the Decide → Flag → Learn flow, hints, scoring |
-| `src/screens/Site.tsx` | The single aura.com-style page: hero, game card (level tabs + current round), level overview, help, call to action, footer |
-| `src/screens/Round.tsx` | A round: message or voicemail mockup, Real/Scam, red flags, results |
-| `src/screens/StatsBand.tsx`, `LevelComplete.tsx` | The FBI stats band and the in-card level-complete panel |
+| `src/screens/` | Welcome, name and how-to-play onboarding · Home (with the FBI stats card) · Trail · Round (intro, message or voicemail, red flags, results) · Level complete · Badges · Help |
 | `src/ui.tsx` | Shared colours, shadows and buttons, plus the badge medallion |
 | `src/ds/` | Pieces pulled from the Aura Blueprint DS bundle: the icon subset, the `CallProtection` illustration and the token CSS. Regenerate them with `node scripts/extract-ds.mjs`, run from a checkout that has the Claude Design bundle in `../project/`. Don't edit the generated files. |
 
@@ -36,4 +34,4 @@ The prototype's Tweaks panel is available as URL params:
 ## Known gaps (carried over from the design)
 
 - "Talk to an Aura fraud specialist" on the help screen doesn't go anywhere yet.
-- Type is set in Inter. Aura's Basel Grotesk isn't licensed into this repo.
+- Type is set in Basel Grotesk, Aura's brand face, which is licensed and not in this repo. Until its files are added the app shows Hanken Grotesk. To switch it on, drop `BaselGrotesk-Regular.woff2`, `BaselGrotesk-Medium.woff2` and `BaselGrotesk-Bold.woff2` into `public/fonts/` and push.
